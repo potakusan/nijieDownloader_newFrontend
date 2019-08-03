@@ -1,0 +1,63 @@
+@charset "UTF-8";
+
+*{
+  font-family: "游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic", sans-serif;
+  font-weight:400;
+}
+
+.commonPadding{
+  padding:15px;
+}
+
+.smallText{
+  font-size:12px;
+}
+
+.grayButton{
+  color: #828282;
+}
+
+.ant-card-cover{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin:0 auto;
+}
+
+.antCard{
+  width:200px !important;
+  height:200px !important;
+}
+
+@media screen and (max-width:1650px){
+  .ant-card-cover{
+    width:150px !important;
+    height:150px !important;
+  }
+}
+
+.ant-row{
+  display: flex;
+  justify-content: flex-start;
+  margin:10px 0 0 0;
+  flex-wrap: wrap;
+}
+.ant-card-cover img{
+  object-fit: contain !important;
+}
+
+.ant-col{
+  padding:4px;
+}
+
+.noCardBody .ant-card-body{
+  display: none !important;
+}
+
+.isDisabledImage img{
+  filter: grayscale();
+}
+
+.isDisabledImage .disableButton{
+  color:#ff6000;
+}
