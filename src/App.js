@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import "antd/dist/antd.css";
 import "./theme/common.css";

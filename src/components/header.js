@@ -4,9 +4,6 @@ import styles from "./../theme/style.module.css";
 const { Header } = Layout;
 
 class PageHeader extends Component{
-  constructor(){
-    super();
-  }
 
   render(){
     const {children, downloadButton} = this.props;

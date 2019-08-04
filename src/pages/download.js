@@ -1,8 +1,11 @@
 import React,{Component} from "react";
+import { Layout } from "antd";
 import Loading from "../components/loading";
 import Error from "../components/error";
 
-import {Image,ImageList} from "../components/imageList";
+import {ImageList} from "../components/downloader/imageList";
+
+const { Content } = Layout;
 
 class Downloader extends Component{
 
@@ -34,27 +37,35 @@ class Downloader extends Component{
   render(){
     if(!this.state.loaded){
       return (
-        <div>
-          <Loading/>
-        </div>
+        <Content style={{ padding: '15px 20px' }}>
+          <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+            <Loading/>
+          </div>
+        </Content>
       )
     }
     if(!this.state.postData || this.state.postData.length === 0){
       return (
-        <Error
-          message={"この機能を使用するにはPOSTメソッドを経由してアクセスしてください。"}
-          additionalDescription={
-            <span>
-              ブックマークレットを介してアクセスしてください。<br/>
-              <a>ここをクリック</a>してキューされているデータを呼び出します。
-            </span>
-          }/>
+        <Content style={{ padding: '15px 20px' }}>
+          <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+            <Error
+              message={"この機能を使用するにはPOSTメソッドを経由してアクセスしてください。"}
+              additionalDescription={
+                <span>
+                  ブックマークレットを介してアクセスしてください。<br/>
+                  <a href="#">ここをクリック</a>してキューされているデータを呼び出します。
+                </span>
+            }/>
+        </div>
+      </Content>
       );
     }
     return (
-    <div>
-      <ImageList data={this.state.postData}/>
-    </div>
+      <Content style={{ padding: '15px 20px' }}>
+        <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+          <ImageList data={this.state.postData}/>
+        </div>
+      </Content>
     );
   }
 

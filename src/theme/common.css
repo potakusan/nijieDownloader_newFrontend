@@ -5,8 +5,25 @@
   font-weight:400;
 }
 
+.ant-btn-loading{
+  transition:0s;
+}
+
+ul.ant-dropdown-menu-item-group-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.fullWidth, .fullWidth > .ant-form-item-control-wrapper{
+  width:100%;
+}
+
 .commonPadding{
   padding:15px;
+}
+
+.smallMargin{
+  margin:10px;
 }
 
 .smallText{
@@ -58,6 +75,13 @@
   filter: grayscale();
 }
 
-.isDisabledImage .disableButton{
-  color:#ff6000;
+.isDisabledImage .disableButton,.standPin{
+  color:#ff6000 !important;
+}
+
+.standPin {
+  -webkit-transform: rotate(-45deg) !important;
+  transform: rotate(-45deg) !important;
+  bottom: 1px;
+  position: relative;
 }

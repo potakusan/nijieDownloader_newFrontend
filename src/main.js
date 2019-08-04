@@ -1,11 +1,15 @@
 import React, {Component} from "react";
-import { BrowserRouter, Route, Link, withRouter, Switch } from "react-router-dom";
-import { Layout, Menu, Breadcrumb, Icon } from "antd";
+import { Route, withRouter, Switch } from "react-router-dom";
+import { Layout, Menu, Icon } from "antd";
 
 import Index  from "./pages/index";
 import Downloader from "./pages/download";
+import HelpIndex from "./pages/help/index";
+import HelpSetup from "./pages/help/setup";
+import HelpUse from "./pages/help/use";
+import HelpLog from "./pages/help/log";
 import Header from "./components/header";
-const { Sider, Content } = Layout;
+const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 class MainContent extends Component {
@@ -14,13 +18,12 @@ class MainContent extends Component {
     collapsed: true,
   };
 
-  constructor(){
-    super();
-  }
-
   click = (v) =>{
     if(v.key === "noOpen1" || v.key === "noOpen2"){
       return false;
+    }
+    if(v.key === "home"){
+      v.key = "";
     }
     this.props.history.push(`/${v.key}`);
   }
@@ -30,7 +33,7 @@ class MainContent extends Component {
     return(
     <Layout style={{ minHeight: '100vh' }}>
       <Header downloadButton={currentPage === "downloader"}>
-        Nijie
+        Nijie Downloader
       </Header>
       <Layout>
         <Sider collapsed={this.state.collapsed}>
@@ -89,14 +92,14 @@ class MainContent extends Component {
         </Menu>
       </Sider>
       <Layout>
-        <Content style={{ padding: '15px 20px' }}>
-          <div style={{ background: '#fff', minHeight: 280 }}>
-            <Switch>
-              <Route path="/home" exact={true} component={Index} />
-              <Route path="/downloader" exact={true} component={Downloader} />
-            </Switch>
-          </div>
-        </Content>
+        <Switch>
+          <Route path="/" exact={true} component={Index} />
+          <Route path="/downloader" exact={true} component={Downloader} />
+          <Route path="/help/" exact={true} component={HelpIndex} />
+          <Route path="/help/setup" exact={true} component={HelpSetup} />
+          <Route path="/help/use" exact={true} component={HelpUse} />
+          <Route path="/help/log" exact={true} component={HelpLog} />
+        </Switch>
       </Layout>
       </Layout>
     </Layout>);
