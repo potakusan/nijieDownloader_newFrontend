@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import { message, Row, Menu, Typography, Divider, Button, Dropdown } from 'antd';
 import Editor from "./editor";
-import storageWrapper from "./localStorage";
+import storageWrapper from "../localStorage";
 import Image from "./image";
 
 const { Title } = Typography;

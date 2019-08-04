@@ -1,22 +1,15 @@
 import React,{Component} from "react";
-import { Layout,Button,Icon } from "antd";
+import { Layout } from "antd";
 import styles from "./../theme/style.module.css";
 const { Header } = Layout;
 
 class PageHeader extends Component{
 
   render(){
-    const {children, downloadButton} = this.props;
+    const {children} = this.props;
     return (
-      <Header className={styles.header}>
+      <Header className={styles.header} style={{borderBottom:"1px solid #003a8c"}}>
         {children}
-        {downloadButton &&
-          <span style={{"display":"inline-block","float":"right"}}>
-            <Button type="dashed" ghost>
-              <Icon type="download" />
-              Download
-            </Button>
-          </span>}
       </Header>
     )
   }

@@ -22,6 +22,9 @@ class Use extends Component{
             <Card size="small" title={<Link to="/help/use">使い方</Link>} className="smallMargin">
               <p>ニジエダウンローダの使い方、設定項目等の紹介</p>
             </Card>
+            <Card size="small" title={<Link to="/help/customPresets">カスタム書式設定</Link>} className="smallMargin">
+              <p>ダウンロードする画像ファイルに適用できるカスタム書式についての説明</p>
+            </Card>
             <Card size="small" title={<Link to="/help/log">更新履歴</Link>} className="smallMargin">
               <p>ニジエダウンローダの過去のアップデートログ</p>
             </Card>

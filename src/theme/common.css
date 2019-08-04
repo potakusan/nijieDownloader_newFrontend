@@ -20,10 +20,15 @@ ul.ant-dropdown-menu-item-group-list {
 
 .commonPadding{
   padding:15px;
+  margin: 9px 0 0 0;
 }
 
 .smallMargin{
   margin:10px;
+}
+
+.upsideDown{
+  margin:10px 0;
 }
 
 .smallText{
@@ -84,4 +89,27 @@ ul.ant-dropdown-menu-item-group-list {
   transform: rotate(-45deg) !important;
   bottom: 1px;
   position: relative;
+}
+
+.groupButtons button{
+  margin: 5px;
+}
+
+.ant-dropdown-menu-item-group-title{
+  border-bottom:1px solid #dadada;
+}
+
+.ant-dropdown-menu, .ant-layout-sider, .ant-layout-header{
+  user-select: none;
+}
+
+.ant-btn-round.ant-btn-lg {
+  height: 50px;
+  padding: 0 35px;
+  font-size: 26px;
+  border-radius: 40px;
+}
+
+.ant-popover{
+  z-index:3;
 }

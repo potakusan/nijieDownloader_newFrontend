@@ -46,7 +46,7 @@ export default class Image extends Component{
       >
       <Card className="noCardBody"
         cover={
-          <Popover content={item.illustrator} title={title}>
+          <Popover content={item.illustrator} title={title} placement="topRight">
             <img alt={item.title} src={
               item.url.replace(this.beforeReplace[0],this.afterReplace[0]).replace(this.beforeReplace[1],this.afterReplace[1])
             } className={`${styles.ldImg} antCard`} style={isDisabled ? {"filter":"grayscale()"} : null} onClick={this.openLightBox} />

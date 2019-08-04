@@ -69,13 +69,26 @@ pinned = {
   },...
 }
 
-albumFolder = {
-  "folders" : [
-    "album_name1","album_name2","album_name3",...
-  ]
-}
+albumFolder = [
+  "album_name1","album_name2","album_name3",...
+]
 
 album_name1 = {
+  {
+    "title":string,
+    "url":string,
+    "illustrator":string,
+    "current":number,
+    "pageSum":number,
+    ...
+  },...
+}
+
+downloadHistory = [
+  "history_name1","history_name2","history_name3",...
+]
+
+history_name1 = {
   {
     "title":string,
     "url":string,
