@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import { Layout } from "antd";
-import Loading from "../components/loading";
-import Error from "../components/error";
+import Loading from "../components/views/loading";
+import Error from "../components/views/error";
 
 import {ImageList} from "../components/downloader/imageList";
 

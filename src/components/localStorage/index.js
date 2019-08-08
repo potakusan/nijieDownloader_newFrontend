@@ -17,6 +17,10 @@ const storageWrapper = class{
 
   getContent = ()=> JSON.parse(localStorage.getItem(this.target));
 
+  getAll(){
+    return this.allData;
+  }
+
   reload(){
     this.allData = this.loadAllItems();
   }

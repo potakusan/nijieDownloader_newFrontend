@@ -13,8 +13,8 @@ import Queue from "./pages/queue";
 import SavedItems from "./pages/savedItems";
 import History from "./pages/history";
 import Settings from "./pages/settings";
-import Header from "./components/header";
-import WebSider from "./components/sider";
+import Header from "./components/views/header";
+import WebSider from "./components/views/sider";
 
 class MainContent extends Component {
 

@@ -1,8 +1,9 @@
 import React,{Component} from "react";
 import { message, Row, Menu, Typography, Divider, Button, Dropdown } from 'antd';
-import Editor from "./editor";
-import storageWrapper from "../localStorage";
-import Image from "./image";
+import DropDownMenu from "../menu/index";
+import Editor from "../common/editor";
+import Image from "../common/image";
+import storageWrapper from "../localStorage/index";
 
 const { Title } = Typography;
 
@@ -32,6 +33,7 @@ export default class Album extends Component{
     this.reloadPinnedItems = this.reloadPinnedItems.bind(this);
     this.allPinned = this.allPinned.bind(this);
     this.allRemovePinned = this.allRemovePinned.bind(this);
+    this.toggleAllPinnedStatus = this.toggleAllPinnedStatus.bind(this);
   }
 
   componentDidMount(){
@@ -51,13 +53,7 @@ export default class Album extends Component{
     return returnArray;
   }
 
-  toggleAllSelection(){
-    const {album} = this.props;
-    const len = album.length;
-    for (let i = 0; i < len; ++i){
-        this.exec(i);
-    }
-  }
+  // Disabled
 
   exec = (i) =>{
     const filter = ()=>{
@@ -85,6 +81,29 @@ export default class Album extends Component{
     return this.setState({disabled:newState});
   }
 
+  toggleAllSelection(){
+    let newState = [];
+    const current = this.state.disabled;
+    for(let i =0; i < this.props.album.length; ++i){
+      newState.push(i+1);
+    }
+    newState = newState.filter((item)=>{
+      return current.indexOf(item) === -1
+    });
+    return this.setState({disabled:newState});
+  }
+
+  toggleDisable(e){
+    let {disabled} = this.state;
+    const num = Number(e.currentTarget.getAttribute("data-num"));
+    disabled = this.exec(num);
+    return this.setState({
+      disabled:disabled
+    });
+  }
+
+  // Pinned
+
   allPinned(){
     this.reloadPinnedItems();
     const album = this.props.album;
@@ -109,15 +128,6 @@ export default class Album extends Component{
     this.reloadPinnedItems();
   }
 
-  toggleDisable(e){
-    let {disabled} = this.state;
-    const num = Number(e.currentTarget.getAttribute("data-num"));
-    disabled = this.exec(num);
-    return this.setState({
-      disabled:disabled
-    });
-  }
-
   togglePinned(e){
     this.reloadPinnedItems();
     const num = e.currentTarget.getAttribute("data-num");
@@ -132,6 +142,24 @@ export default class Album extends Component{
       message.info(`「${title}」をピン留めしました。`);
       this.storage.setItem(item,itemId,itemNum);
     }
+    this.storage.apply();
+    this.reloadPinnedItems();
+  }
+
+  toggleAllPinnedStatus(){
+    this.reloadPinnedItems();
+    const album = this.props.album;
+    const {title,id} = album[0];
+    const current = this.storage.getItem(id);
+    const albumLen = album.length;
+    this.storage.resetItems(id);
+    for(let i = 0;i < albumLen; ++i){
+      if(current[i+1]){
+        continue;
+      }
+      this.storage.setItem(album[i],id,album[i]["current"]);
+    }
+    message.info(`「${title}」のピン留め状態を一括反転しました。`);
     this.storage.apply();
     this.reloadPinnedItems();
   }
@@ -174,58 +202,18 @@ export default class Album extends Component{
 
   render(){
     const {album} = this.props;
-    const {title,illustrator,id} = album[0];
-    const menu = (
-      <Menu>
-        <Menu.ItemGroup title="選択状態">
-          <Menu.Item key="0">
-            <a
-              href={null}
-              onClick={this.allSelect}
-              data-id={id}
-              >すべて選択</a>
-          </Menu.Item>
-          <Menu.Item key="1">
-            <a
-              onClick={this.allRemove}
-              data-id={id}
-            >すべて除外</a>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <a
-              onClick={this.toggleAllSelection}
-              data-id={id}
-            >選択/除外の一括反転</a>
-          </Menu.Item>
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="編集">
-          <Menu.Item key="3">
-            <a
-              onClick={this.toggleEditor}
-              data-id={id}>情報の変更</a>
-          </Menu.Item>
-          <Menu.Item key="4">
-            <a
-              onClick={this.allPinned}
-              >一括ピン留め</a>
-          </Menu.Item>
-          <Menu.Item key="5">
-            <a
-              onClick={this.allRemovePinned}
-              >一括ピン留め解除</a>
-          </Menu.Item>
-          <Menu.Item key="6">
-            <a>アルバムに一括追加</a>
-          </Menu.Item>
-        </Menu.ItemGroup>
-      </Menu>
-    );
+    const {title,illustrator,id} = this.props.album[0];
     return (
       <div>
         <Title level={4}>
-          <Dropdown overlay={menu} trigger={['click']}>
+          <DropDownMenu
+            id={id}
+            allSelect={this.allSelect} allRemove={this.allRemove}
+            toggleAllSelection={this.toggleAllSelection} toggleEditor={this.toggleEditor}
+            allPinned={this.allPinned} allRemovePinned={this.allRemovePinned}
+            toggleAllPinnedStatus={this.toggleAllPinnedStatus}>
             <Button type="primary" icon="menu" type="dashed" className="grayButton"></Button>
-          </Dropdown>
+          </DropDownMenu>
           &nbsp;
           {title}&nbsp;<span className="smallText">{illustrator}</span>
         </Title>

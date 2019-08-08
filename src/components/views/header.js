@@ -1,6 +1,6 @@
+import styles from "./../../theme/style.module.css";
 import React,{Component} from "react";
 import { Layout } from "antd";
-import styles from "./../theme/style.module.css";
 const { Header } = Layout;
 
 class PageHeader extends Component{
