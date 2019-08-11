@@ -12,7 +12,6 @@ export default class Album extends Component{
   constructor(props){
     super(props);
     this.state = {
-      disabled : [],
       imageUrls : [],
       currentSelection : {
         "title":"",
@@ -39,13 +38,17 @@ export default class Album extends Component{
 
   async componentDidMount(){
     this.setState({
-      storedItems : await this.storage.getItem(this.props.album[0]["id"]),
+      storedItems : await this.storage.getItem(this.props.id),
       imageUrls:this.urlOnly()
     });
   }
 
   inArray =(needle)=>{
-    return this.state.disabled.indexOf(needle) >= 0;
+    const {disabled} = this.props;
+    if(!disabled){
+      return false;
+    }
+    return disabled.indexOf(needle) >= 0;
   }
 
   urlOnly(){
@@ -60,21 +63,22 @@ export default class Album extends Component{
   // Disabled
 
   exec = (i) =>{
+    const {id,disabled} = this.props;
     const filter = ()=>{
-      const disabled = this.state.disabled.filter(piece => piece !== i);
-      return disabled;
+      const newState = disabled.filter(piece => piece !== i);
+      return newState;
     }
     if(this.inArray(i)){
       return filter();
     }else{
-      let disabled = this.state.disabled;
-      disabled.push(i)
-      return disabled;
+      let newState = disabled ? disabled : [];
+      newState.push(i);
+      return newState;
     }
   }
 
   allSelect(){
-    return this.setState({disabled:[]});
+    this.props.editDisabled(0,null,this.props.id);
   }
 
   allRemove(){
@@ -82,35 +86,34 @@ export default class Album extends Component{
     for(let i =0; i < this.props.album.length; ++i){
       newState.push(i+1);
     }
-    return this.setState({disabled:newState});
+    this.props.editDisabled(1,newState,this.props.id);
   }
 
   toggleAllSelection(){
     let newState = [];
-    const current = this.state.disabled;
-    for(let i =0; i < this.props.album.length; ++i){
+    const {album,id,disabled} = this.props;
+    for(let i =0; i < album.length; ++i){
       newState.push(i+1);
     }
     newState = newState.filter((item)=>{
-      return current.indexOf(item) === -1
+      if(!disabled){return true;}
+      return disabled.indexOf(item) === -1
     });
-    return this.setState({disabled:newState});
+    this.props.editDisabled(1,newState,id);
   }
 
   toggleDisable(e){
     let {disabled} = this.state;
     const num = Number(e.currentTarget.getAttribute("data-num"));
-    disabled = this.exec(num);
-    return this.setState({
-      disabled:disabled
-    });
+    let newState = this.exec(num);
+    this.props.editDisabled(1,newState,this.props.id);
   }
 
   // Pinned
 
   pusher(array,item,date = new Date().toString()){
     array.push({
-      itemId : item["id"],
+      id : this.props.id,
       title : item["title"],
       illustrator : item["illustrator"],
       url : item["url"],
@@ -167,8 +170,8 @@ export default class Album extends Component{
 
   async toggleAllPinnedStatus(){
     this.toggleSpinner();
-    const album = this.props.album;
-    const {title,id} = album[0];
+    const {id, album} = this.props;
+    const {title} = album[0];
     const current = this.state.storedItems;
     const albumLen = album.length;
     let items = [];
@@ -240,7 +243,9 @@ export default class Album extends Component{
           {title}&nbsp;<span className="smallText">{illustrator}</span>
         </Title>
         <Row gutter={16}>
-          {album.map((item,i)=>{
+          {album.sort((a,b)=>{
+            return a.current > b.current ? 1 : -1;
+          }).map((item,i)=>{
             return <Image key={`${title}-${i}`} item={item} displaySort={this.props.displaySort}
               openLink={this.openLink} inArray={this.inArray} imageUrls={this.state.imageUrls}
               pinnedStatus={this.state.storedItems.some((elm)=>{

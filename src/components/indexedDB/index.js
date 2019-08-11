@@ -8,11 +8,11 @@ const storageWrapper = class{
     this.allData = null;
     this.db = new Dexie("nijieDL");
     this.db.version(1).stores({
-      pinned : "++id,itemId, title, illustrator, url, current, pageSum, cnt , updatedAt",
+      pinned : "++num,id, title, illustrator, url, current, pageSum, cnt , updatedAt",
       albums : "name, sum, updatedAt",
-      albumContent : "itemId, title, illustrator, url, current, pageSum, cnt , updatedAt",
+      albumContent : "id, title, illustrator, url, current, pageSum, cnt , updatedAt",
       history : "name, sum, createdAt",
-      historyContent : "itemId, title, illustrator, url, current, pageSum, cnt , updatedAt"
+      historyContent : "id, title, illustrator, url, current, pageSum, cnt , updatedAt"
     })
   }
 
@@ -23,16 +23,30 @@ const storageWrapper = class{
     return currentData;
   }
 
-  async getItem(itemId){
-    return await this.db.pinned.where({itemId:itemId}).toArray();
+  groupByItemId(innerArray = false){
+    let groups = {};
+    const store = this.allData;
+    store.forEach(item=>{
+      if(!groups[item.id]){
+        groups[item.id] = innerArray ? [] : {};
+      }
+      innerArray ?
+      groups[item.id].push(item) :
+      groups[item.id][item.current] = item;
+    });
+    return groups;
   }
 
-  async checkDuplication(itemId,itemNum){
-    return await this.db.pinned.where({itemId:itemId,current:itemNum}).toArray();
+  async getItem(id){
+    return await this.db.pinned.where({id:id}).toArray();
   }
 
-  async resetItems(itemId){
-    return await this.db.pinned.where({itemId:itemId}).delete();
+  async checkDuplication(id,itemNum){
+    return await this.db.pinned.where({id:id,current:itemNum}).toArray();
+  }
+
+  async resetItems(id){
+    return await this.db.pinned.where({id:id}).delete();
   }
 
   async setMultipleItem(items){
@@ -40,8 +54,9 @@ const storageWrapper = class{
   }
 
   async setItem(item){
+    console.log(item);
     return await this.db.pinned.put({
-      itemId : item.id,
+      id : item.id,
       title : item.title,
       illustrator : item.illustrator,
       url : item.url,
@@ -52,8 +67,8 @@ const storageWrapper = class{
     })
   }
 
-  async removeItem(itemId,itemNum){
-    return await this.db.pinned.where({itemId:itemId,current:itemNum}).delete();
+  async removeItem(id,itemNum){
+    return await this.db.pinned.where({id:id,current:itemNum}).delete();
   }
 
 

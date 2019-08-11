@@ -11,7 +11,6 @@ export default class Image extends Component{
       index: 0,
       isOpen: false,
     }
-    this.openLink = this.openLink.bind(this);
   }
 
   thumbsize = 150;
@@ -28,10 +27,6 @@ export default class Image extends Component{
     this.setState({isOpen:true,index:this.props.item.current -1});
   }
 
-  openLink(e){
-    window.open("//nijie.info/view.php?id=" + this.props.item["id"]);
-  }
-
   render(){
     const {item,imageUrls,toggleDisable,togglePinned,inArray,pinnedStatus,disableButtonIsDisabled} = this.props;
     const {isOpen,index} = this.state;
@@ -43,7 +38,6 @@ export default class Image extends Component{
         data-num={item.current} style={isDisabled ? {"color":"#ff6000"} : null} onClick={toggleDisable} />,
       <Icon type="pushpin" className={pinnedStatus ? "standPin" : null} data-num={item.current} onClick={togglePinned} />,
       <Icon type="plus-circle" />,
-      <Icon type="link" onClick={this.openLink}/>
     ];
     if(disableButtonIsDisabled === true){
       actions.shift();

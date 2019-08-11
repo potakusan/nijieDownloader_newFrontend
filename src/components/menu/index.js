@@ -7,6 +7,8 @@ export default class DropDownMenu extends Component{
     super(props);
   }
 
+  openLink = ()=> window.open( "//nijie.info/view.php?id=" + this.props.id );
+
   render(){
     const {
       children,
@@ -46,31 +48,37 @@ export default class DropDownMenu extends Component{
             </Menu.Item>
           </Menu.ItemGroup>
         }
-        <Menu.ItemGroup title="編集">
+        <Menu.ItemGroup title="ピン留め">
           <Menu.Item key="3">
-            <a
-              onClick={toggleEditor}
-              data-id={id}>情報の変更</a>
-          </Menu.Item>
-          <Menu.Item key="4">
             <a
               onClick={allPinned}
               >一括ピン留め</a>
           </Menu.Item>
-          <Menu.Item key="5">
+          <Menu.Item key="4">
             <a
               onClick={allRemovePinned}
               >一括ピン留め解除</a>
           </Menu.Item>
-          <Menu.Item key="6">
+          <Menu.Item key="5">
             <a
               onClick={toggleAllPinnedStatus}
               >ピン留め状態の一括反転</a>
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.ItemGroup title="アルバム">
-          <Menu.Item key="7">
+          <Menu.Item key="6">
             <a>アルバムに一括追加</a>
+          </Menu.Item>
+        </Menu.ItemGroup>
+        <Menu.ItemGroup title="その他">
+          <Menu.Item key="7">
+            <a
+              onClick={toggleEditor}
+              data-id={id}>情報の変更</a>
+          </Menu.Item>
+          <Menu.Item key="8">
+            <a
+              onClick={this.openLink}>ニジエ上で開く</a>
           </Menu.Item>
         </Menu.ItemGroup>
       </Menu>

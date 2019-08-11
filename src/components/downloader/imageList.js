@@ -1,6 +1,9 @@
 import React,{Component} from "react";
 import { Layout, Button, Dropdown, Menu } from "antd";
 import Album from "./album";
+import storageWrapper from "../indexedDB";
+import Error from "../views/error";
+import Loading from "../views/loading";
 
 const { Footer } = Layout;
 
@@ -11,29 +14,53 @@ export class ImageList extends Component{
     this.state = {
       origin : this.props.data,
       imageSum : this.props.data.length,
-      splitArray : [],
-      imageUrls : [],
+      splitArray : {},
+      disabled : {},
+      loading: true
     }
     this.executeChanger = this.executeChanger.bind(this);
-    const interval = ()=>{
-      const imageSum = document.querySelectorAll(`.ant-col:not([data-disabled="true"])`).length;
-      document.getElementById("selectState").innerHTML = `${imageSum}枚を選択しています`
-    };
-    if(this.interval) {
-        clearInterval(this.interval);
-    }
-    this.interval = setInterval(interval,300);
-  }
-
-  componentWillUnmount(){
-    clearInterval(this.interval);
+    this.editDisabled = this.editDisabled.bind(this);
+    this.replaceItemsWithPinned = this.replaceItemsWithPinned.bind(this);
   }
 
   componentDidMount(){
     this.setState({
-      splitArray : this.splitArray()
+      splitArray : this.splitArray(),
+      loading: false
     })
+  }
 
+  async replaceItemsWithPinned(){
+    this.setState({loading:true});
+    const storage = new storageWrapper();
+    const t = await storage.getAll();
+    const r = storage.groupByItemId(true);
+    this.setState({
+      origin: t,
+      splitArray : r,
+      imageSum : t.length,
+      disabled : {},
+      loading: false,
+    })
+  }
+
+  editDisabled(type = 0,newState,id){
+    let {disabled} = this.state;
+    delete disabled[id];
+    if(type === 1){
+      disabled[id] = newState;
+    }
+
+    let len = this.props.data.length;
+    let disabledSum = 0;
+    Object.keys(disabled).map(item=>{
+      disabledSum += disabled[item].length;
+    });
+
+    this.setState({
+      disabled: disabled,
+      imageSum: len - disabledSum
+    })
   }
 
   splitArray(){
@@ -60,21 +87,32 @@ export class ImageList extends Component{
   }
 
   render(){
-    const { splitArray } = this.state;
+    const { origin, splitArray, disabled, imageSum, loading } = this.state;
+    if(loading){
+      return (<Loading/>);
+    }
+    if(this.props.hasNoItems && origin.length === 0){
+      return (
+        <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+          <Error
+            message={"この機能を使用するにはPOSTメソッドを経由してアクセスしてください。"}
+            additionalDescription={
+              <span>
+                ブックマークレットを介してアクセスしてください。<br/>
+              <a href={null} onClick={this.replaceItemsWithPinned}>ここをクリック</a>してキューされているデータを呼び出します。
+              </span>
+          }/>
+        </div>
+      );
+    }
     const menu = (
       <Menu>
         <Menu.ItemGroup title="ピン留め">
           <Menu.Item key="0">
             <a
               href={null}
-              onClick={null}
+              onClick={this.replaceItemsWithPinned}
               >ピン留めされたアイテムに置き換え</a>
-          </Menu.Item>
-          <Menu.Item key="1">
-            <a
-              href={null}
-              onClick={null}
-              >ピン留めされたアイテムを追加</a>
           </Menu.Item>
         </Menu.ItemGroup>
       </Menu>
@@ -85,7 +123,8 @@ export class ImageList extends Component{
           {Object.keys(splitArray).map((item,num)=>{
             return (
               <Album key={`${item}-${num}`} album={splitArray[item]} origin={this.state.origin}
-                toggleEditor={this.toggleEditor}
+                toggleEditor={this.toggleEditor} id={item}
+                editDisabled={this.editDisabled} disabled={disabled[item]}
                 imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
           })}
           <span style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
@@ -97,9 +136,10 @@ export class ImageList extends Component{
             </Button>
           </span>
         </div>
-        <Footer id="selectState" style={
+        <Footer style={
             { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
                textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
+            {imageSum}枚選択しています
         </Footer>
       </div>
     );

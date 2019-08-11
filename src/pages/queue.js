@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Typography, Button } from "antd";
+import { Layout, Typography, Button, Spin } from "antd";
 import {ImageList} from "../components/storagedItems/imageList";
 import storageWrapper from "../components/indexedDB";
 
@@ -15,7 +15,8 @@ class Index extends Component{
       pinnedItems : [],
       isRevised : false,
       revisedStates: [],
-      willRemove : {}
+      willRemove : {},
+      spinning:false
     }
     this.saveData = this.saveData.bind(this);
     this.reloadItems = this.reloadItems.bind(this);
@@ -24,15 +25,8 @@ class Index extends Component{
   }
 
   async groupedItems(){
-    let groups = {};
-    const store = await this.storage.getAll();
-    store.forEach(item=>{
-      if(!groups[item.itemId]){
-        groups[item.itemId] = {};
-      }
-      groups[item.itemId][item.current] = item;
-    });
-    return groups;
+    await this.storage.getAll();
+    return this.storage.groupByItemId();
   }
 
   async componentDidMount(){
@@ -64,6 +58,7 @@ class Index extends Component{
   }
 
   async execDelete(){
+    this.setState({spinning:true});
     const keysMapping = (target)=>{
       return Object.keys(target);
     }
@@ -72,7 +67,6 @@ class Index extends Component{
     return Promise.all(keysMapping(willRemove).map(async(i)=>{
       const item = willRemove[i];
       for(let j =0;j < item.length; ++j){
-        console.log(i,item[j])
         await this.storage.removeItem(i,item[j]);
       }
     }));
@@ -80,7 +74,6 @@ class Index extends Component{
 
   async saveData() {
     await this.execDelete();
-    console.log("a")
     this.reloadItems();
   }
 
@@ -91,13 +84,14 @@ class Index extends Component{
       isRevised: false,
       revisedStates : [],
       willRemove: {},
+      spinning: false,
     });
   }
 
   render(){
-    const {pinnedItems} = this.state;
+    const {pinnedItems,spinning} = this.state;
     return (
-      <div className="commonPadding">
+      <Spin className="commonPadding" spinning={spinning}>
         <Content>
           <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
             <Typography>
@@ -115,7 +109,7 @@ class Index extends Component{
             </Button>
           </div>}
         </Content>
-      </div>
+      </Spin>
     );
   }
 
