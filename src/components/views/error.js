@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Alert } from 'antd';
+import { Alert } from "antd";
 
 export default class Loader extends Component{
 

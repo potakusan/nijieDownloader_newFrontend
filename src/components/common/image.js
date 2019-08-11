@@ -1,6 +1,6 @@
 import styles from "./../../theme/style.module.css";
 import React,{Component} from "react";
-import { Popover, Card, Col, Icon } from 'antd';
+import { Popover, Card, Col, Icon } from "antd";
 import Lightbox from "react-image-lightbox";
 
 export default class Image extends Component{
@@ -33,10 +33,23 @@ export default class Image extends Component{
   }
 
   render(){
-    const {item,imageUrls,toggleDisable,togglePinned,inArray,pinnedStatus} = this.props;
+    const {item,imageUrls,toggleDisable,togglePinned,inArray,pinnedStatus,disableButtonIsDisabled} = this.props;
     const {isOpen,index} = this.state;
-    const isDisabled = inArray(item.current);
+    const isDisabled = this.props.inArray !== null ? inArray(item.current) : false;
     const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
+    let actions = [
+      <Icon
+        type={isDisabled ? "eye" : "eye-invisible"}
+        data-num={item.current} style={isDisabled ? {"color":"#ff6000"} : null} onClick={toggleDisable} />,
+      <Icon type="pushpin" className={pinnedStatus ? "standPin" : null} data-num={item.current} onClick={togglePinned} />,
+      <Icon type="plus-circle" />,
+      <Icon type="link" onClick={this.openLink}/>
+    ];
+    if(disableButtonIsDisabled === true){
+      actions.shift();
+    }
+    if(!item.title){ return (null); }
+
     return <Col key={"col-" + item.cnt}
         data-id={item.id}
         data-illustrator={item.illustrator}
@@ -51,11 +64,7 @@ export default class Image extends Component{
               item.url.replace(this.beforeReplace[0],this.afterReplace[0]).replace(this.beforeReplace[1],this.afterReplace[1])
             } className={`${styles.ldImg} antCard`} style={isDisabled ? {"filter":"grayscale()"} : null} onClick={this.openLightBox} />
           </Popover>}
-        actions={[
-          <Icon type={isDisabled ? "eye" : "eye-invisible"} data-num={item.current} style={isDisabled ? {"color":"#ff6000"} : null} onClick={toggleDisable} />,
-          <Icon type="pushpin" className={pinnedStatus ? "standPin" : null} data-num={item.current} onClick={togglePinned} />,
-          <Icon type="plus-circle" />,
-          <Icon type="link" onClick={this.openLink}/>]}>
+        actions={actions}>
       </Card>
 
       {isOpen && (

@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^3.20.7",
     "babel-eslint": "^9.0.0",
+    "dexie": "^2.0.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-image-lightbox": "^5.1.0",

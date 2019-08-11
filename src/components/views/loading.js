@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Spin } from 'antd';
+import { Spin } from "antd";
 
 export default class Loader extends Component{
 

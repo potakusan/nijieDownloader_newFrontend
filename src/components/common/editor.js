@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Modal, Button, Form, Input, Icon, Spin } from 'antd';
+import { Modal, Button, Form, Input, Icon, Spin } from "antd";
 
 export default class Editor extends Component{
 
@@ -64,7 +64,7 @@ export default class Editor extends Component{
             <Form className="editor-form">
               <Form.Item className="fullWidth">
                 <Input
-                  prefix={<Icon type="file-image" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  prefix={<Icon type="file-image" style={{ color: "rgba(0,0,0,.25)" }} />}
                   onChange={handleChangeTitle}
                   value={currentSelection.title}
                   readOnly={isProcessing}
@@ -73,7 +73,7 @@ export default class Editor extends Component{
               </Form.Item>
               <Form.Item className="fullWidth">
                 <Input
-                  prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
                   onChange={handleChangeIllustrator}
                   value={currentSelection.illustrator}
                   readOnly={isProcessing}

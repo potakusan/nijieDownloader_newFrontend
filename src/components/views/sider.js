@@ -27,7 +27,7 @@ export default class WebSider extends Component{
     }
     return (
       <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={this.click} selectedKeys={[currentPage]}>
+        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" onClick={this.click} selectedKeys={[currentPage]}>
           <Menu.Item key="home">
             <Icon type="home" />
             <span>ホーム</span>

@@ -113,3 +113,7 @@ ul.ant-dropdown-menu-item-group-list {
 .ant-popover{
   z-index:3;
 }
+
+.isInvisible{
+  display : none !important;
+}

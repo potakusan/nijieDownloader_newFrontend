@@ -2,6 +2,7 @@ import React,{Component} from "react";
 import { Layout } from "antd";
 import Loading from "../components/views/loading";
 import Error from "../components/views/error";
+import {htmlEntities} from "../components/common/functions";
 
 import {ImageList} from "../components/downloader/imageList";
 
@@ -22,7 +23,7 @@ class Downloader extends Component{
   initializer(){
     let postData = document.getElementById("temp");
     if(postData){
-      postData = JSON.parse("[" + decodeURIComponent(postData.value).replace("q=","") + "]");
+      postData = JSON.parse("[" + htmlEntities(decodeURIComponent(postData.value).replace("q=","")) + "]");
     }
     return this.setState({
       loaded: true,

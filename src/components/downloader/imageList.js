@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu } from 'antd';
+import { Layout, Button, Dropdown, Menu } from "antd";
 import Album from "./album";
 
 const { Footer } = Layout;
@@ -89,7 +89,7 @@ export class ImageList extends Component{
                 imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
           })}
           <span style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
-            <Dropdown overlay={menu} trigger={['click']}>
+            <Dropdown overlay={menu} trigger={["click"]}>
               <Button size="large" icon="menu" style={{marginRight:"15px"}}></Button>
             </Dropdown>
             <Button type="primary" size="large" icon="download">
@@ -98,7 +98,7 @@ export class ImageList extends Component{
           </span>
         </div>
         <Footer id="selectState" style={
-            { position: 'fixed', zIndex: 1, width: "100%", bottom: 0, padding: "6px",
+            { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
                textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
         </Footer>
       </div>
