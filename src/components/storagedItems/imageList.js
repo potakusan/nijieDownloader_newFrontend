@@ -4,7 +4,6 @@ import Image from "../common/image";
 import DropDownMenu from "../menu/index";
 import {inArray} from "../common/functions";
 
-const { Footer } = Layout;
 const { Title } = Typography;
 
 export class ImageList extends Component{
@@ -12,10 +11,11 @@ export class ImageList extends Component{
   constructor(props){
     super(props);
     const {data} = this.props;
-    let items = [] ,urls = [], title,illustrator;
+    let items = [] ,urls = [], title,illustrator,len;
     Object.keys(data).map((eachObj,i)=>{
       urls.push(data[eachObj]["url"]);
       items.push(data[eachObj]);
+      len++;
       if(i === 0){
         title = data[eachObj]["title"];
         illustrator = data[eachObj]["illustrator"];
@@ -122,7 +122,7 @@ export class ImageList extends Component{
 
   render(){
     const {data,id} = this.props;
-    const {urls,willRemove,title,illustrator} = this.state;
+    const {urls,willRemove,title,illustrator,imageSum} = this.state;
     return (
       <div>
         <Title level={4}>

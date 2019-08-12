@@ -1,22 +1,23 @@
 import React,{Component} from "react";
 import { Layout, Typography, Button, Spin } from "antd";
 import {ImageList} from "../components/storagedItems/imageList";
-import storageWrapper from "../components/indexedDB";
+import {pinnedDB} from "../components/indexedDB";
 
 const { Title, Paragraph } = Typography;
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 
 class Index extends Component{
 
   constructor(){
     super();
-    this.storage = new storageWrapper();
+    this.storage = new pinnedDB();
     this.state ={
       pinnedItems : [],
       isRevised : false,
       revisedStates: [],
       willRemove : {},
-      spinning:false
+      spinning:false,
+      imageSum : 0
     }
     this.saveData = this.saveData.bind(this);
     this.reloadItems = this.reloadItems.bind(this);
@@ -25,14 +26,15 @@ class Index extends Component{
   }
 
   async groupedItems(){
-    await this.storage.getAll();
-    return this.storage.groupByItemId();
+    const items = await this.storage.getAll();
+    return {groups:this.storage.groupByItemId(),len:items.length};
   }
 
   async componentDidMount(){
-    const groups = await this.groupedItems();
+    const {groups,len} = await this.groupedItems();
     this.setState({
-      pinnedItems : groups
+      pinnedItems : groups,
+      imageSum : len
     })
   }
 
@@ -78,9 +80,10 @@ class Index extends Component{
   }
 
   async reloadItems(){
-    const groups = await this.groupedItems();
+    const {groups,len} = await this.groupedItems();
     this.setState({
       pinnedItems:groups,
+      imageSum : len,
       isRevised: false,
       revisedStates : [],
       willRemove: {},
@@ -89,10 +92,10 @@ class Index extends Component{
   }
 
   render(){
-    const {pinnedItems,spinning} = this.state;
+    const {pinnedItems,imageSum,spinning} = this.state;
     return (
       <Spin className="commonPadding" spinning={spinning}>
-        <Content>
+        <Content style={{ padding: '15px 20px' }}>
           <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
             <Typography>
               <Title level={2}>ピン留め</Title>
@@ -108,6 +111,11 @@ class Index extends Component{
               反映を保存
             </Button>
           </div>}
+          <Footer style={
+              { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
+                 textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
+              {imageSum}枚選択しています
+          </Footer>
         </Content>
       </Spin>
     );

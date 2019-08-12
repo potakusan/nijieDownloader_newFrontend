@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import "./theme/common.css";
 import "react-image-lightbox/style.css";
 
-import MainContent from "./main";
+import MainContent from "./route";
 //import store from "./redux/index";
 //import { Provider, connect } from 'react-redux';
 

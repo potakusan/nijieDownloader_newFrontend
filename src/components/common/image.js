@@ -1,7 +1,8 @@
 import styles from "./../../theme/style.module.css";
 import React,{Component} from "react";
 import { Popover, Card, Col, Icon } from "antd";
-import Lightbox from "react-image-lightbox";
+import {imgToThumbnails} from "./functions";
+import Lightbox from "./lightbox";
 
 export default class Image extends Component{
 
@@ -13,19 +14,9 @@ export default class Image extends Component{
     }
   }
 
-  thumbsize = 150;
-  beforeReplace = [
-    new RegExp(/\/nijie_picture\//g),
-    new RegExp(/\/dojin_main\//g),
-  ]
-  afterReplace = [
-    `/__rs_l${Number(this.thumbsize+50)}x${Number(this.thumbsize+50)}/nijie_picture/`,
-    `/__rs_l${Number(this.thumbsize+50)}x${Number(this.thumbsize+50)}/dojin_main/`
-  ];
-
-  openLightBox = (e)=>{
-    this.setState({isOpen:true,index:this.props.item.current -1});
-  }
+  openLightBox = ()=>this.setState({isOpen:true,index:this.props.item.current -1});
+  closeLightbox = ()=> this.setState({isOpen:false});
+  changeIndex = (index) => this.setState({index:index});
 
   render(){
     const {item,imageUrls,toggleDisable,togglePinned,inArray,pinnedStatus,disableButtonIsDisabled} = this.props;
@@ -37,7 +28,6 @@ export default class Image extends Component{
         type={isDisabled ? "eye" : "eye-invisible"}
         data-num={item.current} style={isDisabled ? {"color":"#ff6000"} : null} onClick={toggleDisable} />,
       <Icon type="pushpin" className={pinnedStatus ? "standPin" : null} data-num={item.current} onClick={togglePinned} />,
-      <Icon type="plus-circle" />,
     ];
     if(disableButtonIsDisabled === true){
       actions.shift();
@@ -54,30 +44,16 @@ export default class Image extends Component{
       <Card className="noCardBody"
         cover={
           <Popover content={item.illustrator} title={title} placement="topRight">
-            <img alt={item.title} src={
-              item.url.replace(this.beforeReplace[0],this.afterReplace[0]).replace(this.beforeReplace[1],this.afterReplace[1])
-            } className={`${styles.ldImg} antCard`} style={isDisabled ? {"filter":"grayscale()"} : null} onClick={this.openLightBox} />
+            <img alt={item.title}
+              src={
+                imgToThumbnails(item.url)
+              } className={`${styles.ldImg} antCard`} style={isDisabled ? {"filter":"grayscale()"} : null} onClick={this.openLightBox} />
           </Popover>}
         actions={actions}>
       </Card>
 
       {isOpen && (
-        <Lightbox
-          mainSrc={imageUrls[index]}
-          nextSrc={imageUrls[(index + 1) % imageUrls.length]}
-          prevSrc={imageUrls[(index + imageUrls.length - 1) % imageUrls.length]}
-          onCloseRequest={() => this.setState({ isOpen: false })}
-          onMovePrevRequest={() =>
-            this.setState({
-              index: (index + imageUrls.length - 1) % imageUrls.length,
-            })
-          }
-          onMoveNextRequest={() =>
-            this.setState({
-              index: (index + 1) % imageUrls.length,
-            })
-          }
-        />
+        <Lightbox imageUrls={imageUrls} index={index} close={this.closeLightbox} move={this.changeIndex}/>
       )}
     </Col>
   }

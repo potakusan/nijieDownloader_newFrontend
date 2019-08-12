@@ -2,19 +2,18 @@ import React, {Component} from "react";
 import { Route, withRouter, Switch } from "react-router-dom";
 import { Layout } from "antd";
 
-import Index  from "./pages/index";
-import Downloader from "./pages/download";
-import HelpIndex from "./pages/help/index";
-import HelpSetup from "./pages/help/setup";
-import HelpUse from "./pages/help/use";
-import HelpLog from "./pages/help/log";
-import HelpCustomPresets from "./pages/help/customPresets";
-import Queue from "./pages/queue";
-import SavedItems from "./pages/savedItems";
-import History from "./pages/history";
-import Settings from "./pages/settings";
-import Header from "./components/views/header";
-import WebSider from "./components/views/sider";
+import Index  from "../pages/index";
+import Downloader from "../pages/download";
+import HelpIndex from "../pages/help/index";
+import HelpSetup from "../pages/help/setup";
+import HelpUse from "../pages/help/use";
+import HelpLog from "../pages/help/log";
+import HelpCustomPresets from "../pages/help/customPresets";
+import Queue from "../pages/queue";
+import History from "../pages/history";
+import Settings from "../pages/settings";
+import Header from "../components/views/header";
+import WebSider from "../components/views/sider";
 
 class MainContent extends Component {
 
@@ -37,7 +36,6 @@ class MainContent extends Component {
             <Route path="/help/customPresets" exact={true} component={HelpCustomPresets} />
             <Route path="/help/log" exact={true} component={HelpLog} />
             <Route path="/queue" exact={true} component={Queue} />
-            <Route path="/savedItems" exact={true} component={SavedItems} />
             <Route path="/history" exact={true} component={History} />
             <Route path="/settings" exact={true} component={Settings} />
           </Switch>

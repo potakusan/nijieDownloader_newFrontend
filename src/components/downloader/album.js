@@ -3,7 +3,7 @@ import { message, Row, Menu, Typography, Divider, Button, Dropdown, Spin } from 
 import DropDownMenu from "../menu/index";
 import Editor from "../common/editor";
 import Image from "../common/image";
-import storageWrapper from "../indexedDB";
+import {pinnedDB} from "../indexedDB";
 
 const { Title } = Typography;
 
@@ -22,7 +22,7 @@ export default class Album extends Component{
       storedItems : [],
       spinning : false
     }
-    this.storage = new storageWrapper();
+    this.storage = new pinnedDB();
     this.toggleDisable = this.toggleDisable.bind(this);
     this.togglePinned = this.togglePinned.bind(this);
     this.executeChanger = this.executeChanger.bind(this);
@@ -103,6 +103,10 @@ export default class Album extends Component{
   }
 
   toggleDisable(e){
+    if(e.shiftKey){
+      this.toggleAllSelection();
+      return;
+    }
     let {disabled} = this.state;
     const num = Number(e.currentTarget.getAttribute("data-num"));
     let newState = this.exec(num);
@@ -151,6 +155,10 @@ export default class Album extends Component{
   }
 
   async togglePinned(e){
+    if(e.shiftKey){
+      this.toggleAllPinnedStatus();
+      return;
+    }
     this.toggleSpinner();
     const num = e.currentTarget.getAttribute("data-num");
     const item = this.props.album[num-1];

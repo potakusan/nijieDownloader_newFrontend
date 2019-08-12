@@ -99,7 +99,7 @@ ul.ant-dropdown-menu-item-group-list {
   border-bottom:1px solid #dadada;
 }
 
-.ant-dropdown-menu, .ant-layout-sider, .ant-layout-header{
+.ant-dropdown-menu, .ant-layout-sider, .ant-layout-header, .nosel{
   user-select: none;
 }
 
@@ -116,4 +116,23 @@ ul.ant-dropdown-menu-item-group-list {
 
 .isInvisible{
   display : none !important;
+}
+
+.ant-spin-nested-loading{
+  overflow:hidden;
+}
+
+.flexImageBoxWrapper{
+  display:flex;
+  justify-content: flex-start;
+}
+
+.flexImageBox,.flexImageBox img{
+  width:75px;
+  height:75px;
+  object-fit:cover;
+}
+
+.flexImageBox img{
+  padding:5px;
 }

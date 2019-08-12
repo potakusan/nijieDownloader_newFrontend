@@ -1,4 +1,5 @@
 import Dexie from "dexie";
+import {timeFormatter} from "../common/functions";
 
 const storageWrapper = class{
 
@@ -9,18 +10,9 @@ const storageWrapper = class{
     this.db = new Dexie("nijieDL");
     this.db.version(1).stores({
       pinned : "++num,id, title, illustrator, url, current, pageSum, cnt , updatedAt",
-      albums : "name, sum, updatedAt",
-      albumContent : "id, title, illustrator, url, current, pageSum, cnt , updatedAt",
       history : "name, sum, createdAt",
-      historyContent : "id, title, illustrator, url, current, pageSum, cnt , updatedAt"
+      historyContent : "++num, title, illustrator, url, current, pageSum, cnt , parent, updatedAt"
     })
-  }
-
-  // Load all pinned-items
-  async getAll(){
-    const currentData = await this.db.pinned.toArray();
-    this.allData = currentData;
-    return currentData;
   }
 
   groupByItemId(innerArray = false){
@@ -35,6 +27,17 @@ const storageWrapper = class{
       groups[item.id][item.current] = item;
     });
     return groups;
+  }
+
+}
+
+export const pinnedDB = class extends storageWrapper{
+
+  // Load all pinned-items
+  async getAll(){
+    const currentData = await this.db.pinned.toArray();
+    this.allData = currentData;
+    return currentData;
   }
 
   async getItem(id){
@@ -54,7 +57,6 @@ const storageWrapper = class{
   }
 
   async setItem(item){
-    console.log(item);
     return await this.db.pinned.put({
       id : item.id,
       title : item.title,
@@ -63,7 +65,7 @@ const storageWrapper = class{
       current : item.current,
       pageSum : item.pageSum,
       cnt : item.cnt,
-      updatedAt : new Date().toString()
+      updatedAt : timeFormatter(3)
     })
   }
 
@@ -71,120 +73,59 @@ const storageWrapper = class{
     return await this.db.pinned.where({id:id,current:itemNum}).delete();
   }
 
-
 }
 
-/*
-const storageWrapper = class{
+export const historyLists = class extends storageWrapper{
 
-  constructor(target = "pinned"){
-    this.target = target;
-    this.allData = this.loadAllItems();
+  async getAll(){
+    const currentData = await this.db.history.toArray();
+    this.allData = currentData;
+    return currentData;
   }
 
-  loadAllItems(){
-    let all = this.getContent();
-    if(!all){
-      localStorage.setItem(this.target,JSON.stringify({}));
-      all = {};
-    }
-    return all;
+  async deleteAll(){
+    return await this.db.history.clear();
   }
 
-  getContent = ()=> JSON.parse(localStorage.getItem(this.target));
-
-  getAll(){
-    return this.allData;
+  async setItem(sum){
+    return await this.db.history.put({
+      name : timeFormatter(3),
+      sum : sum,
+      updatedAt : timeFormatter(3)
+    })
   }
 
-  reload(){
-    this.allData = this.loadAllItems();
-  }
-
-  getItem(targetId){
-    return this.allData[targetId];
-  }
-
-  checkDuplication(itemId,itemNum){
-    if(!this.allData[itemId]){return false;}
-    return this.allData[itemId][itemNum] ? true : false;
-  }
-
-  resetItems(itemId){
-    delete this.allData[itemId];
-  }
-
-  setItem(newItem,itemId,itemNum){
-    if(!this.allData[itemId]){
-      this.allData[itemId] = {
-        [itemNum] : newItem
-      }
-      return;
-    }
-    this.allData[itemId][itemNum] = newItem;
-  }
-
-  removeItem(title,itemId,itemNum){
-    delete this.allData[itemId][itemNum];
-  }
-
-  replaceAll(newItems){
-    this.allData = newItems;
-  }
-
-  apply(){
-    return new Promise(resolve=>{
-      localStorage.setItem(this.target,JSON.stringify(this.allData));
-    }
+  async removeItem(title){
+    return await this.db.history.where({title:title}).delete();
   }
 
 }
 
-export default storageWrapper;
+export const historyItems = class extends storageWrapper{
 
-/*
+  async backup(){
+    const currentData = await this.db.historyContent.toArray();
+    return currentData;
+  }
 
-pinned = {
-  {
-    "title":string,
-    "url":string,
-    "illustrator":string,
-    "current":number,
-    "pageSum":number,
-    ...
-  },...
+  async getAll(parent){
+    const currentData = await this.db.historyContent.where({parent:parent}).toArray();
+    this.allData = currentData;
+    return currentData;
+  }
+
+  async deleteAll(){
+    return await this.db.historyContent.clear();
+  }
+
+  async bulkPut(items){
+    return await this.db.historyContent.bulkPut(items);
+  }
+
+  async deleteItem(parent){
+    return await this.db.historyContent.where({parent:parent}).delete();
+  }
+
 }
-
-albumFolder = [
-  "album_name1","album_name2","album_name3",...
-]
-
-album_name1 = {
-  {
-    "title":string,
-    "url":string,
-    "illustrator":string,
-    "current":number,
-    "pageSum":number,
-    ...
-  },...
-}
-
-downloadHistory = [
-  "history_name1","history_name2","history_name3",...
-]
-
-history_name1 = {
-  {
-    "title":string,
-    "url":string,
-    "illustrator":string,
-    "current":number,
-    "pageSum":number,
-    ...
-  },...
-}
-
- */
 
 export default storageWrapper;

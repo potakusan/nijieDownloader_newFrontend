@@ -65,11 +65,6 @@ export default class DropDownMenu extends Component{
               >ピン留め状態の一括反転</a>
           </Menu.Item>
         </Menu.ItemGroup>
-        <Menu.ItemGroup title="アルバム">
-          <Menu.Item key="6">
-            <a>アルバムに一括追加</a>
-          </Menu.Item>
-        </Menu.ItemGroup>
         <Menu.ItemGroup title="その他">
           <Menu.Item key="7">
             <a

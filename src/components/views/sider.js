@@ -56,17 +56,13 @@ export default class WebSider extends Component{
             <Icon type="pushpin" />
             <span>ピン留め</span>
           </Menu.Item>
-          <Menu.Item key="savedItems">
-            <Icon type="database" />
-            <span>アルバム</span>
-          </Menu.Item>
           <Menu.Item key="history">
             <Icon type="history" />
             <span>履歴</span>
           </Menu.Item>
           <Menu.Item key="settings">
             <Icon type="setting" />
-            <span>設定</span>
+            <span>設定・初期化</span>
           </Menu.Item>
           <SubMenu
             key="bulb"

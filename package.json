@@ -6,11 +6,15 @@
     "antd": "^3.20.7",
     "babel-eslint": "^9.0.0",
     "dexie": "^2.0.4",
+    "file-saver": "^2.0.2",
+    "jszip": "^3.2.2",
+    "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-image-lightbox": "^5.1.0",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "streamsaver": "^2.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

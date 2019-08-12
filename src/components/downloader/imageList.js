@@ -1,10 +1,11 @@
 import React,{Component} from "react";
 import { Layout, Button, Dropdown, Menu } from "antd";
 import Album from "./album";
-import storageWrapper from "../indexedDB";
+import {pinnedDB} from "../indexedDB";
 import Error from "../views/error";
 import Loading from "../views/loading";
-
+import DownloadButton from "./buttons";
+import NoImg from "./noImg";
 const { Footer } = Layout;
 
 export class ImageList extends Component{
@@ -21,6 +22,7 @@ export class ImageList extends Component{
     this.executeChanger = this.executeChanger.bind(this);
     this.editDisabled = this.editDisabled.bind(this);
     this.replaceItemsWithPinned = this.replaceItemsWithPinned.bind(this);
+    this.removeAllDownloadedItems = this.removeAllDownloadedItems.bind(this);
   }
 
   componentDidMount(){
@@ -32,7 +34,7 @@ export class ImageList extends Component{
 
   async replaceItemsWithPinned(){
     this.setState({loading:true});
-    const storage = new storageWrapper();
+    const storage = new pinnedDB();
     const t = await storage.getAll();
     const r = storage.groupByItemId(true);
     this.setState({
@@ -42,6 +44,10 @@ export class ImageList extends Component{
       disabled : {},
       loading: false,
     })
+  }
+
+  async removeAllDownloadedItems(){
+    
   }
 
   editDisabled(type = 0,newState,id){
@@ -87,36 +93,13 @@ export class ImageList extends Component{
   }
 
   render(){
-    const { origin, splitArray, disabled, imageSum, loading } = this.state;
+    const { origin, splitArray, disabled, loading, imageSum } = this.state;
     if(loading){
       return (<Loading/>);
     }
     if(this.props.hasNoItems && origin.length === 0){
-      return (
-        <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
-          <Error
-            message={"この機能を使用するにはPOSTメソッドを経由してアクセスしてください。"}
-            additionalDescription={
-              <span>
-                ブックマークレットを介してアクセスしてください。<br/>
-              <a href={null} onClick={this.replaceItemsWithPinned}>ここをクリック</a>してキューされているデータを呼び出します。
-              </span>
-          }/>
-        </div>
-      );
+      return (<NoImg replaceItemsWithPinned={this.replaceItemsWithPinned}/>);
     }
-    const menu = (
-      <Menu>
-        <Menu.ItemGroup title="ピン留め">
-          <Menu.Item key="0">
-            <a
-              href={null}
-              onClick={this.replaceItemsWithPinned}
-              >ピン留めされたアイテムに置き換え</a>
-          </Menu.Item>
-        </Menu.ItemGroup>
-      </Menu>
-    );
     return (
       <div>
         <div>
@@ -127,20 +110,14 @@ export class ImageList extends Component{
                 editDisabled={this.editDisabled} disabled={disabled[item]}
                 imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
           })}
-          <span style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <Button size="large" icon="menu" style={{marginRight:"15px"}}></Button>
-            </Dropdown>
-            <Button type="primary" size="large" icon="download">
-              Download
-            </Button>
-          </span>
+          <DownloadButton splitArray={splitArray} disabled={disabled} imageSum={imageSum}
+            replaceItemsWithPinned={this.replaceItemsWithPinned} removeAllDownloadedItems={this.removeAllDownloadedItems}/>
+          <Footer style={
+              { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
+                 textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
+              {imageSum}枚選択しています
+          </Footer>
         </div>
-        <Footer style={
-            { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
-               textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
-            {imageSum}枚選択しています
-        </Footer>
       </div>
     );
   }
