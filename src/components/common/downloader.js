@@ -2,6 +2,7 @@ import localStorage from "../localStorage";
 import {timeFormatter}  from "./functions";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import streamSaver from "streamsaver";
 import {historyLists,historyItems} from "../indexedDB";
 
 export default class{
@@ -31,8 +32,8 @@ export default class{
 
   async fetch(include = true){
     await this.wait();
+    const headers = new Headers();
     const res = await fetch(this.proxy + this.currentItem.url, {method:"GET"});
-    console.log(this.currentItem,this.currentName,this.currentExt)
     if(!this.currentItem || !this.currentName || !this.currentExt){
       return {"error":true,"reason":"(Process will continue) Invalid URL Parameters sent.(Filename or extension,or both was not found) - currentFile:" + this.currentItem.title};
     }
@@ -42,16 +43,19 @@ export default class{
     if(include){
       this.zip.file(this.currentName + this.currentExt,await res.arrayBuffer());
     }
-    return {"error":false};
+    return {"error":false,information:{
+      speed : res.headers.get("X-Speed") || 0,
+      size :  res.headers.get("X-Filesize") || 0,
+    }};
   }
 
-  async downloadIt(downloadedImages){
+  async downloadIt(downloadedImages,fileSize){
     try{
       const t = await this.zip.generateAsync({type:"blob"});
       saveAs(t,timeFormatter(0) + ".zip");
 
       const lists = new historyLists();
-      const parent = await lists.setItem(this.sum);
+      const parent = await lists.setItem(this.sum,fileSize);
 
       for(let i = 0; i < downloadedImages.length;++i){
         downloadedImages[i]["parent"] = parent;

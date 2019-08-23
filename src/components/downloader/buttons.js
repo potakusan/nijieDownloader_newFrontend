@@ -1,6 +1,7 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu,notification } from "antd";
+import { Layout, Button, Dropdown, Menu, notification } from "antd";
 import downloader from "../common/downloader";
+import showError from "../common/showError";
 import ModalStatus from "./modal";
 
 export default class DownloadButton extends Component{
@@ -13,7 +14,10 @@ export default class DownloadButton extends Component{
       progress : 0,
       canCloseModal : false,
       currentItem:null,
-      currentNum:0
+      currentNum:0,
+      speed : 0,
+      size: 0,
+      sum : 0,
     }
     this.state = Object.assign({},this.initialState);
     this.download = this.download.bind(this);
@@ -45,6 +49,7 @@ export default class DownloadButton extends Component{
       this.toggleStatus({"downloading":true,"showStatus":true,"canCloseModal":false});
       const {splitArray,disabled,imageSum} = this.props;
       const exec = new downloader(imageSum);
+      const startTime = new Date().getTime();
       let downloadedImages = [];
       let currentProgress = 0,keys = [];
       const download = Object.keys(splitArray).map(item=>keys.push(item));
@@ -64,23 +69,28 @@ export default class DownloadButton extends Component{
           currentProgress++;
           const current = c[j];
           this.toggleStatus({"currentItem":current,"currentNum":currentProgress});
-          const {error,reason} = await exec.convertFileName(c[j],illustratorId).fetch();
+          const {error,reason,information} = await exec.convertFileName(c[j],illustratorId).fetch();
+          const requiredTime = new Date().getTime() - startTime;
           if(error){
-            this.showWarning(reason);
+            showError(reason);
           }
           downloadedImages.push(current);
+          const newSum = Number(this.state.sum) + Number(information.size);
           this.setState({
-            progress : Math.round(currentProgress / imageSum * 100)
+            progress : Math.round(currentProgress / imageSum * 100),
+            size : information.size,
+            sum : newSum,
+            speed : newSum / (requiredTime / 1000),
           });
         }
       }
-      await exec.downloadIt(downloadedImages);
+      await exec.downloadIt(downloadedImages,this.state.sum);
       this.setState({
         canCloseModal: true,
         progress: 100,
       });
     }catch(e){
-      this.showWarning((
+      showError((
         <p>
           An error occured while processing your request.<br/>
           Please check the detailed error message shown below.<br/>
@@ -99,21 +109,17 @@ export default class DownloadButton extends Component{
     this.setState(this.initialState);
   }
 
-  showWarning(description,duration = 3,type = 0){
-    let mes = {
-      message : "Exception Error Occured!",
-      description: description,
-      duration: duration,
-    };
-    switch(type){
-      case 0: return notification.error(mes);
-      case 1: return notification.warning(mes);
-    }
-  }
-
   render(){
     const menu = (
       <Menu>
+        <Menu.ItemGroup title="リセット">
+          <Menu.Item key="0">
+            <a
+              href={null}
+              onClick={this.props.resetAllEdit}
+              >編集状態をリセット</a>
+          </Menu.Item>
+        </Menu.ItemGroup>
         <Menu.ItemGroup title="ピン留め">
           <Menu.Item key="0">
             <a
@@ -132,18 +138,18 @@ export default class DownloadButton extends Component{
         </Menu.ItemGroup>
       </Menu>
     );
-    const {showStatus,progress,canCloseModal,currentItem,currentNum} = this.state;
+    const {showStatus,progress,canCloseModal,currentItem,currentNum,information} = this.state;
     return (
       <div>
         <div style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
-          <Dropdown overlay={menu} trigger={["click"]}>
+          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
             <Button size="large" icon="menu" style={{marginRight:"15px"}}></Button>
           </Dropdown>
           <Button type="primary" size="large" icon="download" onClick={this.download}>
             Download
           </Button>
           {showStatus && <ModalStatus
-            imageSum={this.props.imageSum} currentNum={currentNum} cancelButton={this.cancel}
+            imageSum={this.props.imageSum} currentNum={currentNum} cancelButton={this.cancel} state={this.state}
             s={showStatus} p={progress} c={canCloseModal} closeModal={this.closeModal} currentItem={currentItem}/>}
         </div>
       </div>

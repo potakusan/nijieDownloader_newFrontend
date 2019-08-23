@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { message, Row, Menu, Typography, Divider, Button, Dropdown, Spin } from "antd";
+import { message, Row, Menu, Typography, Divider, Button, Dropdown, Spin, notification, Affix } from "antd";
 import DropDownMenu from "../menu/index";
 import Editor from "../common/editor";
 import Image from "../common/image";
@@ -34,6 +34,12 @@ export default class Album extends Component{
     this.allPinned = this.allPinned.bind(this);
     this.allRemovePinned = this.allRemovePinned.bind(this);
     this.toggleAllPinnedStatus = this.toggleAllPinnedStatus.bind(this);
+    this.criticalMes = (
+      <span>
+      An error occured while processing your request.<br/>
+      Please check the detailed error message shown below.<br/>
+      </span>
+    );
   }
 
   async componentDidMount(){
@@ -130,50 +136,77 @@ export default class Album extends Component{
   }
 
   async allPinned(){
-    this.toggleSpinner();
-    const album = this.props.album;
-    const {title,id} = album[0];
-    const albumLen = album.length;
-    const date = new Date().toString();
-    let items = [];
-    await this.storage.resetItems(id);
-    for(let i = 0;i < albumLen; ++i){
-      items = this.pusher(items,album[i]);
+    try{
+      this.toggleSpinner();
+      const album = this.props.album;
+      const {title,id} = album[0];
+      const albumLen = album.length;
+      const date = new Date().toString();
+      let items = [];
+      await this.storage.resetItems(id);
+      for(let i = 0;i < albumLen; ++i){
+        items = this.pusher(items,album[i]);
+      }
+      this.storage.setMultipleItem(items);
+      message.success(`「${title}」を一括ピン留めしました。`);
+      this.reloadPinnedItems();
+    }catch(e){
+      return this.showWarning((
+        <p>
+          {this.criticalMes}
+          <b>{e.message ? e.message : e}</b>
+        </p>),0,1
+      );
     }
-    this.storage.setMultipleItem(items);
-    message.info(`「${title}」を一括ピン留めしました。`);
-    this.reloadPinnedItems();
   }
 
   async allRemovePinned(){
-    this.toggleSpinner();
-    const album = this.props.album;
-    const {title,id} = album[0];
-    message.info(`「${title}」のピン留めを一括解除しました。`);
-    await this.storage.resetItems(id);
-    this.reloadPinnedItems();
+    try{
+      this.toggleSpinner();
+      const album = this.props.album;
+      const {title,id} = album[0];
+      message.success(`「${title}」のピン留めを一括解除しました。`);
+      await this.storage.resetItems(id);
+      this.reloadPinnedItems();
+    }catch(e){
+      return this.showWarning((
+        <p>
+          {this.criticalMes}
+          <b>{e.message ? e.message : e}</b>
+        </p>),0,1
+      );
+    }
   }
 
   async togglePinned(e){
-    if(e.shiftKey){
-      this.toggleAllPinnedStatus();
-      return;
+    try{
+      if(e.shiftKey){
+        this.toggleAllPinnedStatus();
+        return;
+      }
+      this.toggleSpinner();
+      const num = e.currentTarget.getAttribute("data-num");
+      const item = this.props.album[num-1];
+      const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
+      const itemId = item.id;
+      const itemNum = item.current;
+      const duplication = await this.storage.checkDuplication(itemId,itemNum);
+      if(duplication.length > 0){
+        message.success(`「${title}」のピン留めを解除しました。`);
+        await this.storage.removeItem(itemId,itemNum);
+      }else{
+        message.success(`「${title}」をピン留めしました。`);
+        await this.storage.setItem(item);
+      }
+      this.reloadPinnedItems();
+    }catch(e){
+      return this.showWarning((
+        <p>
+          {this.criticalMes}
+          <b>{e.message ? e.message : e}</b>
+        </p>),0,1
+      );
     }
-    this.toggleSpinner();
-    const num = e.currentTarget.getAttribute("data-num");
-    const item = this.props.album[num-1];
-    const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
-    const itemId = item.id;
-    const itemNum = item.current;
-    const duplication = await this.storage.checkDuplication(itemId,itemNum);
-    if(duplication.length > 0){
-      message.info(`「${title}」のピン留めを解除しました。`);
-      await this.storage.removeItem(itemId,itemNum);
-    }else{
-      message.info(`「${title}」をピン留めしました。`);
-      await this.storage.setItem(item);
-    }
-    this.reloadPinnedItems();
   }
 
   async toggleAllPinnedStatus(){
@@ -191,7 +224,7 @@ export default class Album extends Component{
       items = this.pusher(items,album[i]);
     }
     this.storage.setMultipleItem(items);
-    message.info(`「${title}」のピン留め状態を一括反転しました。`);
+    message.success(`「${title}」のピン留め状態を一括反転しました。`);
     this.reloadPinnedItems();
   }
 
@@ -233,34 +266,59 @@ export default class Album extends Component{
 
   toggleSpinner = ()=> this.setState({spinning:!this.state.spinning})
 
+  showWarning(description,duration = 3,type = 0){
+    let mes = {
+      message : "Exception Error Occured!",
+      description: description,
+      duration: duration,
+    };
+    switch(type){
+      case 0: return notification.error(mes);
+      case 1: return notification.warning(mes);
+    }
+  }
+
   render(){
-    const {album} = this.props;
+    const {album, showType} = this.props;
     let {title,illustrator,id} = this.props.album[0];
+    const content = () => (
+      album.sort((a,b)=>{
+        return a.current > b.current ? 1 : -1;
+      }).map((item,i)=>{
+        return <Image key={`${title}-${i}`} item={item} displaySort={this.props.displaySort}
+          openLink={this.openLink} inArray={this.inArray} imageUrls={this.state.imageUrls}
+          pinnedStatus={this.state.storedItems.some((elm)=>{
+            return elm.current === item.current
+          })}
+          togglePinned={this.togglePinned} toggleDisable={this.toggleDisable}/>
+      })
+    )
+
+    if(!showType){
+      return content();
+    }
+
     return (
+      <div ref={dom => {
+          this.container = dom;
+        }}>
       <Spin spinning={this.state.spinning} tip="変更を保存しています">
-        <Title level={4}>
-          <DropDownMenu
-            id={id}
-            allSelect={this.allSelect} allRemove={this.allRemove}
-            toggleAllSelection={this.toggleAllSelection} toggleEditor={this.toggleEditor}
-            allPinned={this.allPinned} allRemovePinned={this.allRemovePinned}
-            toggleAllPinnedStatus={this.toggleAllPinnedStatus}>
-            <Button type="primary" icon="menu" type="dashed" className="grayButton"></Button>
-          </DropDownMenu>
-          &nbsp;
-          {title}&nbsp;<span className="smallText">{illustrator}</span>
-        </Title>
+        <Affix target={()=> this.container}>
+          <Title level={4}>
+            <DropDownMenu
+              id={id}
+              allSelect={this.allSelect} allRemove={this.allRemove}
+              toggleAllSelection={this.toggleAllSelection} toggleEditor={this.toggleEditor}
+              allPinned={this.allPinned} allRemovePinned={this.allRemovePinned}
+              toggleAllPinnedStatus={this.toggleAllPinnedStatus}>
+              <Button type="primary" icon="menu" type="dashed" className="grayButton"></Button>
+            </DropDownMenu>
+            &nbsp;
+            {title}&nbsp;<span className="smallText">{illustrator}</span>
+          </Title>
+        </Affix>
         <Row gutter={16}>
-          {album.sort((a,b)=>{
-            return a.current > b.current ? 1 : -1;
-          }).map((item,i)=>{
-            return <Image key={`${title}-${i}`} item={item} displaySort={this.props.displaySort}
-              openLink={this.openLink} inArray={this.inArray} imageUrls={this.state.imageUrls}
-              pinnedStatus={this.state.storedItems.some((elm)=>{
-                return elm.current === item.current
-              })}
-              togglePinned={this.togglePinned} toggleDisable={this.toggleDisable}/>}
-          )}
+          {content()}
         </Row>
         <Editor visible={this.state.editorVisible} toggleEditor={this.toggleEditor}
           currentSelection={this.state.currentSelection}
@@ -268,6 +326,7 @@ export default class Album extends Component{
           executeChanger={this.executeChanger}/>
         <Divider />
       </Spin>
+    </div>
     )
   }
 }

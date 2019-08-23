@@ -1,7 +1,8 @@
 import React,{Component} from "react";
-import { Layout, Typography, Button, Spin } from "antd";
+import { Layout, Typography, Button, Spin, Empty } from "antd";
 import {ImageList} from "../components/storagedItems/imageList";
 import {pinnedDB} from "../components/indexedDB";
+import Error from "../components/views/error";
 
 const { Title, Paragraph } = Typography;
 const { Content, Footer } = Layout;
@@ -16,8 +17,9 @@ class Index extends Component{
       isRevised : false,
       revisedStates: [],
       willRemove : {},
-      spinning:false,
-      imageSum : 0
+      spinning:true,
+      imageSum : 0,
+      cannotLoad : false,
     }
     this.saveData = this.saveData.bind(this);
     this.reloadItems = this.reloadItems.bind(this);
@@ -31,11 +33,16 @@ class Index extends Component{
   }
 
   async componentDidMount(){
-    const {groups,len} = await this.groupedItems();
-    this.setState({
-      pinnedItems : groups,
-      imageSum : len
-    })
+    try{
+      const {groups,len} = await this.groupedItems();
+      this.setState({
+        pinnedItems : groups,
+        imageSum : len,
+        spinning:false,
+      })
+    }catch(e){
+      this.setState({cannotLoad:true,spinning:false});
+    }
   }
 
   isRevised =(newState,place)=>{
@@ -92,7 +99,7 @@ class Index extends Component{
   }
 
   render(){
-    const {pinnedItems,imageSum,spinning} = this.state;
+    const {pinnedItems,imageSum,spinning,cannotLoad} = this.state;
     return (
       <Spin className="commonPadding" spinning={spinning}>
         <Content style={{ padding: '15px 20px' }}>
@@ -100,11 +107,17 @@ class Index extends Component{
             <Typography>
               <Title level={2}>ピン留め</Title>
             </Typography>
-            {Object.keys(pinnedItems).map((item,num)=>{
-              return <ImageList key={num}
-                data={pinnedItems[item]} id={item} isRevised={this.isRevised}
-                reload={this.reloadItems}/>
-            })}
+            {cannotLoad && <Error type="error" message="エラー" additionalDescription="データの読み込みができませんでした。"/>}
+            {!cannotLoad && <div>
+              { imageSum === 0 &&
+                <Empty description={<span>ピン留めされたアイテムがありません。</span>}/>
+              }
+              {Object.keys(pinnedItems).map((item,num)=>{
+                return <ImageList key={num}
+                  data={pinnedItems[item]} id={item} isRevised={this.isRevised}
+                  reload={this.reloadItems}/>
+              })}
+            </div>}
           </div>
           {this.state.isRevised && <div style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
             <Button type="danger" size="large" icon="save" onClick={this.saveData}>

@@ -10,6 +10,7 @@
     "jszip": "^3.2.2",
     "moment": "^2.24.0",
     "react": "^16.8.6",
+    "react-countup": "^4.2.2",
     "react-dom": "^16.8.6",
     "react-image-lightbox": "^5.1.0",
     "react-router-dom": "^5.0.1",

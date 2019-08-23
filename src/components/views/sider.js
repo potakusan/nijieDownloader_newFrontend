@@ -45,6 +45,7 @@ export default class WebSider extends Component{
               <Menu.Item key="help/setup">セットアップ</Menu.Item>
               <Menu.Item key="help/use">使い方</Menu.Item>
               <Menu.Item key="help/customPresets">カスタム書式設定</Menu.Item>
+              <Menu.Item key="help/spec">利用推奨環境・規約</Menu.Item>
               <Menu.Item key="help/log">更新履歴</Menu.Item>
             </Menu.ItemGroup>
           </SubMenu>

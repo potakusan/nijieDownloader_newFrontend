@@ -38,7 +38,7 @@ class List extends Component{
     const {isOpen,index,thumbs} = this.state;
     return (
       <Timeline.Item>
-        <a onClick={this.viewFull}>{list.name} ({list.sum} 枚)</a>
+        <a onClick={this.viewFull}>{list.name} ({list.sum} 枚 / {Math.round(list.fileSize / 1048576 * 100) / 100} MiB)</a>
         <div className="flexImageBoxWrapper">
           {thumbs.map((i,num)=>{
             return (

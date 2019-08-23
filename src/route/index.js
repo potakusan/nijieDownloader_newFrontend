@@ -8,6 +8,7 @@ import HelpIndex from "../pages/help/index";
 import HelpSetup from "../pages/help/setup";
 import HelpUse from "../pages/help/use";
 import HelpLog from "../pages/help/log";
+import HelpSpec from "../pages/help/spec";
 import HelpCustomPresets from "../pages/help/customPresets";
 import Queue from "../pages/queue";
 import History from "../pages/history";
@@ -34,6 +35,7 @@ class MainContent extends Component {
             <Route path="/help/setup" exact={true} component={HelpSetup} />
             <Route path="/help/use" exact={true} component={HelpUse} />
             <Route path="/help/customPresets" exact={true} component={HelpCustomPresets} />
+            <Route path="/help/spec" exact={true} component={HelpSpec} />
             <Route path="/help/log" exact={true} component={HelpLog} />
             <Route path="/queue" exact={true} component={Queue} />
             <Route path="/history" exact={true} component={History} />

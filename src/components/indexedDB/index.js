@@ -3,6 +3,19 @@ import {timeFormatter} from "../common/functions";
 
 const storageWrapper = class{
 
+  async openTransaction(type,target){
+    let pArray = [target.map(t=>t.clear())];
+    return this.db.transaction(type,target, async ()=>{
+      return Promise.all(pArray)
+    })
+    .then(result => { return {res:result,error:false} })
+    .catch(error => { return {res:error,error:true} });
+  }
+
+  _this(){
+    return this.db;
+  }
+
   constructor(target = "pinned",keyPath = null){
     this.target = target;
     this.keyPath = keyPath;
@@ -10,7 +23,7 @@ const storageWrapper = class{
     this.db = new Dexie("nijieDL");
     this.db.version(1).stores({
       pinned : "++num,id, title, illustrator, url, current, pageSum, cnt , updatedAt",
-      history : "name, sum, createdAt",
+      history : "name, sum, fileSize, createdAt",
       historyContent : "++num, title, illustrator, url, current, pageSum, cnt , parent, updatedAt"
     })
   }
@@ -40,24 +53,28 @@ export const pinnedDB = class extends storageWrapper{
     return currentData;
   }
 
-  async getItem(id){
-    return await this.db.pinned.where({id:id}).toArray();
+  deleteAll(){
+    return this.db.pinned.clear();
   }
 
-  async checkDuplication(id,itemNum){
-    return await this.db.pinned.where({id:id,current:itemNum}).toArray();
+  getItem(id){
+    return this.db.pinned.where({id:id}).toArray();
   }
 
-  async resetItems(id){
-    return await this.db.pinned.where({id:id}).delete();
+  checkDuplication(id,itemNum){
+    return this.db.pinned.where({id:id,current:itemNum}).toArray();
   }
 
-  async setMultipleItem(items){
-    return await this.db.pinned.bulkPut(items);
+  resetItems(id){
+    return this.db.pinned.where({id:id}).delete();
   }
 
-  async setItem(item){
-    return await this.db.pinned.put({
+  setMultipleItem(items){
+    return this.db.pinned.bulkPut(items);
+  }
+
+  setItem(item){
+    return this.db.pinned.put({
       id : item.id,
       title : item.title,
       illustrator : item.illustrator,
@@ -69,8 +86,8 @@ export const pinnedDB = class extends storageWrapper{
     })
   }
 
-  async removeItem(id,itemNum){
-    return await this.db.pinned.where({id:id,current:itemNum}).delete();
+  removeItem(id,itemNum){
+    return this.db.pinned.where({id:id,current:itemNum}).delete();
   }
 
 }
@@ -83,29 +100,34 @@ export const historyLists = class extends storageWrapper{
     return currentData;
   }
 
-  async deleteAll(){
-    return await this.db.history.clear();
+  deleteAll(){
+    return this.db.history.clear();
   }
 
-  async setItem(sum){
-    return await this.db.history.put({
+  setMultipleItem(items){
+    return this.db.history.bulkPut(items);
+  }
+
+
+  setItem(sum,fileSize){
+    return this.db.history.put({
       name : timeFormatter(3),
       sum : sum,
+      fileSize : fileSize,
       updatedAt : timeFormatter(3)
     })
   }
 
-  async removeItem(title){
-    return await this.db.history.where({title:title}).delete();
+  removeItem(title){
+    return this.db.history.where({title:title}).delete();
   }
 
 }
 
 export const historyItems = class extends storageWrapper{
 
-  async backup(){
-    const currentData = await this.db.historyContent.toArray();
-    return currentData;
+  backup(){
+    return this.db.historyContent.toArray();
   }
 
   async getAll(parent){
@@ -114,16 +136,22 @@ export const historyItems = class extends storageWrapper{
     return currentData;
   }
 
-  async deleteAll(){
-    return await this.db.historyContent.clear();
+  async getAllItems(){
+    const currentData = await this.db.historyContent.toArray();
+    this.allData = currentData;
+    return currentData;
   }
 
-  async bulkPut(items){
-    return await this.db.historyContent.bulkPut(items);
+  deleteAll(){
+    return this.db.historyContent.clear();
   }
 
-  async deleteItem(parent){
-    return await this.db.historyContent.where({parent:parent}).delete();
+  bulkPut(items){
+    return this.db.historyContent.bulkPut(items);
+  }
+
+  deleteItem(parent){
+    return this.db.historyContent.where({parent:parent}).delete();
   }
 
 }

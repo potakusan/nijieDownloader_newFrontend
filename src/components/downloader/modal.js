@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 export default class ModalWindow extends Component{
 
   render(){
-    const {p,c,s,closeModal,currentItem,currentNum,imageSum,cancelButton} = this.props;
+    const {p,c,s,closeModal,currentItem,currentNum,imageSum,cancelButton,state} = this.props;
     if(!currentItem){
       return (null);
     }
+    const _p = 1048576;
     return (
       <div>
         <Modal
@@ -37,6 +38,7 @@ export default class ModalWindow extends Component{
         { p < 100 &&
           <p align="center">
             <b>Total : {currentNum} of {imageSum}</b><br/>
+            ({Math.round(state.sum / _p * 100) / 100} MiB, {Math.round(state.speed / _p * 100) / 100} MB/s)<br/>
             {currentItem["title"]} by {currentItem["illustrator"]} ( {currentItem["current"]} of {currentItem["pageSum"]} )<br/>
             {currentItem["url"]}
           </p>

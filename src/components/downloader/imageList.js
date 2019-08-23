@@ -1,26 +1,29 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu } from "antd";
+import { Layout, Button, Dropdown, Menu, Spin, message, Empty, Switch, Typography } from "antd";
 import Album from "./album";
-import {pinnedDB} from "../indexedDB";
-import Error from "../views/error";
+import {pinnedDB,historyItems} from "../indexedDB";
 import Loading from "../views/loading";
 import DownloadButton from "./buttons";
 import NoImg from "./noImg";
 const { Footer } = Layout;
+const { Title } = Typography;
 
 export class ImageList extends Component{
 
   constructor(props){
     super(props);
     this.state = {
+      spinning : false,
       origin : this.props.data,
       imageSum : this.props.data.length,
       splitArray : {},
       disabled : {},
-      loading: true
+      loading: true,
+      showType : true,
     }
     this.executeChanger = this.executeChanger.bind(this);
     this.editDisabled = this.editDisabled.bind(this);
+    this.resetAllEdit = this.resetAllEdit.bind(this);
     this.replaceItemsWithPinned = this.replaceItemsWithPinned.bind(this);
     this.removeAllDownloadedItems = this.removeAllDownloadedItems.bind(this);
   }
@@ -30,6 +33,17 @@ export class ImageList extends Component{
       splitArray : this.splitArray(),
       loading: false
     })
+  }
+
+  resetAllEdit(){
+    this.setState({
+      origin: this.props.data,
+      splitArray : this.splitArray(),
+      imageSum : this.props.data.length,
+      disabled : {},
+      loading: false,
+    });
+    this.succeed();
   }
 
   async replaceItemsWithPinned(){
@@ -43,12 +57,39 @@ export class ImageList extends Component{
       imageSum : t.length,
       disabled : {},
       loading: false,
-    })
+    });
+    this.succeed();
   }
 
   async removeAllDownloadedItems(){
-    
+    this.toggleSpinning();
+    const { splitArray } = this.state;
+    const storage = new historyItems();
+    const items = await storage.getAllItems();
+    let disabled = {};
+    Object.keys(splitArray).map(a=>{
+      splitArray[a].map(b=>{
+        items.some(c=>{
+          if(c.url === b.url){
+            if(!disabled[a]){ disabled[a] = []; }
+            disabled[a].push(c.current);
+          }
+        })
+      })
+    });
+    if(!disabled){
+      return;
+    }
+    this.setState({
+      disabled : disabled,
+      spinning : false
+    });
+    this.succeed();
   }
+
+  succeed = ()=> message.success("操作が完了しました。");
+
+  toggleSpinning = ()=> this.setState({spinning:!this.state.spinning});
 
   editDisabled(type = 0,newState,id){
     let {disabled} = this.state;
@@ -93,7 +134,7 @@ export class ImageList extends Component{
   }
 
   render(){
-    const { origin, splitArray, disabled, loading, imageSum } = this.state;
+    const { origin, splitArray, disabled, loading, imageSum, spinning, showType } = this.state;
     if(loading){
       return (<Loading/>);
     }
@@ -101,24 +142,32 @@ export class ImageList extends Component{
       return (<NoImg replaceItemsWithPinned={this.replaceItemsWithPinned}/>);
     }
     return (
-      <div>
+      <Spin spinning={spinning}>
         <div>
-          {Object.keys(splitArray).map((item,num)=>{
-            return (
-              <Album key={`${item}-${num}`} album={splitArray[item]} origin={this.state.origin}
-                toggleEditor={this.toggleEditor} id={item}
-                editDisabled={this.editDisabled} disabled={disabled[item]}
-                imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
-          })}
+          <Title level={4}>画像一覧</Title>
+          <div style={{clear:"both"}} className={!showType ? "isSimpleDisplay" : "isDetailedDisplay"}>
+            {origin.length === 0 && <Empty style={{marginTop:"20px"}} description={<span>ダウンロードできる画像はありません。</span>}/>}
+            {Object.keys(splitArray).map((item,num)=>{
+              return (
+                <Album key={`${item}-${num}`} album={splitArray[item]} origin={this.state.origin} showType={showType}
+                  toggleEditor={this.toggleEditor} id={item}
+                  editDisabled={this.editDisabled} disabled={disabled[item]}
+                  imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
+              })}
+          </div>
           <DownloadButton splitArray={splitArray} disabled={disabled} imageSum={imageSum}
+            resetAllEdit={this.resetAllEdit}
             replaceItemsWithPinned={this.replaceItemsWithPinned} removeAllDownloadedItems={this.removeAllDownloadedItems}/>
           <Footer style={
               { position: "fixed", zIndex: 1, width: "100%", bottom: 0, padding: "6px",
                  textAlign:"left", fontWeight:"bold", background:"#fff", borderTop:"1px solid #ccc" }}>
               {imageSum}枚選択しています
+              <Switch style={{position:"absolute",right:"250px"}} checkedChildren="個別表示" unCheckedChildren="シンプル表示" onChange={
+                ()=>this.setState({showType:!showType})
+              } checked={showType}/>
           </Footer>
         </div>
-      </div>
+      </Spin>
     );
   }
 }

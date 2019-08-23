@@ -49,7 +49,7 @@ export class ImageList extends Component{
     const album = this.props.album;
     const {title,id} = album[0];
     const albumLen = album.length;
-    message.info(`「${title}」を一括ピン留めしました。`);
+    message.success(`「${title}」を一括ピン留めしました。`);
     this.storage.resetItems(id);
     for(let i = 0;i < albumLen; ++i){
       this.storage.setItem(album[i],id,album[i]["current"]);
@@ -60,7 +60,7 @@ export class ImageList extends Component{
   allRemovePinned(){
     const album = this.props.album;
     const {title,id} = album[0];
-    message.info(`「${title}」のピン留めを一括解除しました。`);
+    message.success(`「${title}」のピン留めを一括解除しました。`);
     this.storage.resetItems(id);
     this.storage.apply();
   }
@@ -72,11 +72,11 @@ export class ImageList extends Component{
     const itemId = item.id;
     let newState = this.state.willRemove;
     if(!this.inArray(num)){
-      message.info(`「${title}」のピン留めを解除しました。`);
+      message.success(`「${title}」のピン留めを解除しました。`);
       newState.push(num)
       this.setState({willRemove:newState});
     }else{
-      message.info(`「${title}」をピン留めしました。`);
+      message.success(`「${title}」をピン留めしました。`);
       newState = newState.filter(v=>v !== num);
       this.setState({willRemove:newState});
     }
@@ -95,7 +95,7 @@ export class ImageList extends Component{
       }
       this.storage.setItem(album[i],id,album[i]["current"]);
     }
-    message.info(`「${title}」のピン留め状態を一括反転しました。`);
+    message.success(`「${title}」のピン留め状態を一括反転しました。`);
     this.storage.apply();
   }
 

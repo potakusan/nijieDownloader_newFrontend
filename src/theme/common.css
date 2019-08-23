@@ -125,6 +125,7 @@ ul.ant-dropdown-menu-item-group-list {
 .flexImageBoxWrapper{
   display:flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .flexImageBox,.flexImageBox img{
@@ -135,4 +136,13 @@ ul.ant-dropdown-menu-item-group-list {
 
 .flexImageBox img{
   padding:5px;
+}
+
+.isSimpleDisplay{
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px 0 0 0;
+  flex-wrap: wrap;
+  margin-left: -8px;
+  margin-right: -8px;
 }

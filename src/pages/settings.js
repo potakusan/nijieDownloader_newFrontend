@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Button, Icon, Form, Input, Layout, Typography, Checkbox, Radio,Spin } from "antd";
+import { Button, Icon, Form, Input, Layout, Typography, Checkbox, Radio,Spin,message } from "antd";
 import { Link } from "react-router-dom";
 
 import Export from "../components/export";
@@ -14,11 +14,11 @@ class Settings extends Component{
   constructor(){
     super();
     this._ls = new localStorage();
-    const {fileName,noAlertOnSuccess} = this._ls.item;
+    const {fileName,downloadType,noAlertOnSuccess} = this._ls.item;
     this.state = {
       fileName :  fileName ? fileName :  "$o",
       noAlertOnSuccess : noAlertOnSuccess ? noAlertOnSuccess : false,
-      downloadType : 0,
+      downloadType : downloadType,
       spinning: false,
     }
     this.saveSettings = this.saveSettings.bind(this);
@@ -26,6 +26,7 @@ class Settings extends Component{
 
   saveSettings(){
     this._ls.item = this.state;
+    message.success("設定を保存しました。");
   }
 
   handleFileNameChange = (e)=> this.setState({fileName:e.target.value});
@@ -55,12 +56,10 @@ class Settings extends Component{
                 <p>ブックマークレットのパラメータでstorage=3を設定している場合に、ダウンロード完了時のアラートを表示するか否かを設定します。</p>
                 <Title level={4}>ダウンロード方式</Title>
                 <Radio.Group onChange={this.handleRadioChange} value={this.state.downloadType}>
-                  <Radio value={0}>Blob</Radio>
-                  <Radio value={1}>Stream(β版提供)</Radio>
+                  <Radio value={0}>Blob Only</Radio>
+                  <Radio value={1} disabled>Streams API</Radio>
                 </Radio.Group>
-                <p>Blob方式の場合、ダウンロードできるファイルサイズの上限がブラウザおよびお使いのマシンのスペックにより上下します。<br/>
-                Chromeの場合2GB、Firefoxの場合800MB程度となります。</p>
-                <p>Stream方式の場合、使用可能なブラウザが限定されます。また、アルバムごとにZIPファイルがダウンロードされます。</p>
+                <p>ダウンロード方式を変更します。</p>
                 <Button type="primary" size="large" icon="save" onClick={this.saveSettings}>
                   設定を保存
                 </Button>
