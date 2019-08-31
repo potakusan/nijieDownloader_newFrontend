@@ -27,6 +27,11 @@ class Spec extends Component{
             </ol>
             <p>最新版のGoogle ChromeやFirefoxでは動作します。<br/>
             Internet Explorer11以下、プライベートブラウジングが有効化された各ブラウザ等では動作しません。</p>
+            <p>
+              本サービスでは、ピン留めや履歴などサービスにおいて用いるデータをユーザーのコンピュータ内に保管します。<br/>
+              これらのデータがサーバーに送信されることは一切ありません。なお、ブラウザの設定において閲覧履歴データの削除を行った場合、対象範囲によってはこれらのデータが削除される可能性があります。<br/>
+              エクスポート機能をご活用ください。
+            </p>
             <Title level={2}>利用規約</Title>
             <p>この利用規約（以下本規約）は、
               <a href="https://twitter.com/_2R5" target="_blank" rel="noopener noreferrer">@_2R5</a>

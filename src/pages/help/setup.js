@@ -1,6 +1,7 @@
 import React,{Component} from "react";
 import { Layout, Typography } from "antd";
 import HelpBreadcrumb from "./breadcrumb";
+import { Link } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
@@ -24,6 +25,31 @@ class Setup extends Component{
               <p align="center">
                 <img src="https://files.poyashi.me/nijieDL.gif" alt="when you use Chrome" style={{width:"100%",boxShadow:"0px 0px 3px #222",maxWidth:" 661px"}}/><br/>
                 (Chromeの場合はブックマークバーにD&Dするだけ)
+              </p>
+            </Paragraph>
+          </Typography>
+          <Typography>
+            <Title level={2}>初期設定</Title>
+            <Paragraph>
+              <p>ブックマークレットのURLパラメータにおいて、各種動作設定を行うことができます。</p>
+              <Title level={4}>&storage=0 (default)</Title>
+              <p>画像データ取得後、ダウンローダーに移動します。</p>
+              <Title level={4}>&storage=2</Title>
+              <p>画像データをキューし、まとめてダウンローダに送信できます。</p>
+              <p><b>&noconf=0 (default)</b></p>
+              <p><b>&noconf=1</b><br/>
+              画像データ取得後、ダウンローダにデータを送信しません。<br/>
+              ニジエトップページにてブックマークレットを実行することで、キューされている画像データをまとめて送信します。
+              </p>
+              <Title level={4}>&storage=3</Title>
+              <p>ブックマークレット実行時、ニジエ外に移動することなくその場で画像をダウンロードします。</p>
+              <p><b>&noconf=0 (default)</b></p>
+              <p><b>&noconf=1</b><br/>
+              ダウンロード確認ダイアログを非表示にします。<br/>
+              ダウンロード完了ダイアログを非表示にするには、<Link to="/settings">ダウンローダ設定</Link>より「完了アラートを表示しない」にチェックを入れてください。</p>
+              <p><b>&fname=""</b><br/>
+              storage=3設定時、保存する画像の命名規則は当パラメータのダブルコーテーションに囲まれる形で入力してください。<br/>
+              なお、スラッシュによる階層分けは使用できません。
               </p>
             </Paragraph>
           </Typography>

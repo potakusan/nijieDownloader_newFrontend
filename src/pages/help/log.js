@@ -17,8 +17,8 @@ class Log extends Component{
         <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
           <Typography>
             <Title level={2}>更新履歴</Title>
-            <Card type="inner" bordered={true} title="2019/08/03 v2.0.0α">
-              v2の開発開始
+            <Card type="inner" bordered={true} title="2019/08/25 v2.0.0">
+              v2公開
             </Card>
           </Typography>
         </div>

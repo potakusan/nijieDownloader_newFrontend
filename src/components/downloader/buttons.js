@@ -142,7 +142,7 @@ export default class DownloadButton extends Component{
     return (
       <div>
         <div style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>
-          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+          <Dropdown overlay={menu} placement="bottomRight">
             <Button size="large" icon="menu" style={{marginRight:"15px"}}></Button>
           </Dropdown>
           <Button type="primary" size="large" icon="download" onClick={this.download}>
