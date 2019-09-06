@@ -14,7 +14,11 @@ export default class Image extends Component{
     }
   }
 
-  openLightBox = ()=>this.setState({isOpen:true,index:this.props.item.current -1});
+  openLightBox = (e)=>{
+    e.shiftKey ?
+      window.open("//nijie.info/view.php?id=" + this.props.item.id,"_blank") :
+      this.setState({isOpen:true,index:this.props.item.current -1});
+  }
   closeLightbox = ()=> this.setState({isOpen:false});
   changeIndex = (index) => this.setState({index:index});
 

@@ -15,6 +15,7 @@ import History from "../pages/history";
 import Settings from "../pages/settings";
 import Header from "../components/views/header";
 import WebSider from "../components/views/sider";
+import NotFound from "../pages/notFound";
 
 class MainContent extends Component {
 
@@ -40,6 +41,7 @@ class MainContent extends Component {
             <Route path="/queue" exact={true} component={Queue} />
             <Route path="/history" exact={true} component={History} />
             <Route path="/settings" exact={true} component={Settings} />
+            <Route component={NotFound} />
           </Switch>
         </Layout>
       </Layout>

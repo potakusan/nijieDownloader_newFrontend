@@ -24,6 +24,7 @@ class Use extends Component{
               <img src="https://files.poyashi.me/atOnce.gif" alt="一括選択反転" style={{width:"100%",boxShadow:"0px 0px 3px #222",maxWidth:" 661px"}}/>
             </p>
             <p>・以上のボタン操作は、Shiftキーを押しながら行うことで、同じアルバム内に存在する画像に対し一括反転操作を行うことができます。</p>
+            <p>・サムネイルをShiftキーを押下しながらクリックすることでニジエ上で当該画像を表示します。</p>
             <Divider/>
             <p>各アルバムのタイトル横のハンバーガーボタンから、そのアルバムに登録されている画像全てに対し一括の編集を行うことができます。<br/>
             できる操作は以下の通り：<br/>
