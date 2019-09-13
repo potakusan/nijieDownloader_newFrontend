@@ -2,7 +2,6 @@ import React,{Component} from "react";
 import { Layout } from "antd";
 import Loading from "../components/views/loading";
 import {htmlEntities} from "../components/common/functions";
-
 import {ImageList} from "../components/downloader/imageList";
 
 const { Content } = Layout;

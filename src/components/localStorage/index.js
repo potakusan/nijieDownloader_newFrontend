@@ -5,7 +5,6 @@ export default class {
     if(!this.item){
       this.item = {
         fileName : "$o",
-        noAlertOnSuccess: false,
         downloadType: 0
       };
     }

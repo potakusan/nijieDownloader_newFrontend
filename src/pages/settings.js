@@ -17,7 +17,6 @@ class Settings extends Component{
     const {fileName,downloadType,noAlertOnSuccess} = this._ls.item;
     this.state = {
       fileName :  fileName ? fileName :  "$o",
-      noAlertOnSuccess : noAlertOnSuccess ? noAlertOnSuccess : false,
       downloadType : downloadType,
       spinning: false,
     }
@@ -30,7 +29,6 @@ class Settings extends Component{
   }
 
   handleFileNameChange = (e)=> this.setState({fileName:e.target.value});
-  handleCheckChange = (e)=> this.setState({noAlertOnSuccess:e.target.checked});
   handleRadioChange = (e)=> this.setState({downloadType:e.target.value})
 
   render(){
@@ -49,11 +47,6 @@ class Settings extends Component{
                 </p>
                 <Input placeholder="書式を設定..." className="fullWidth" style={{margin:"6px 0"}}
                   value={this.state.fileName} onChange={this.handleFileNameChange}/>
-                <Title level={4}>そのままダウンロード</Title>
-                <Checkbox className="nosel"
-                  checked={this.state.noAlertOnSuccess} onChange={this.handleCheckChange}
-                >完了アラートを表示しない</Checkbox>
-                <p>ブックマークレットのパラメータでstorage=3を設定している場合に、ダウンロード完了時のアラートを表示するか否かを設定します。</p>
                 <Title level={4}>ダウンロード方式</Title>
                 <Radio.Group onChange={this.handleRadioChange} value={this.state.downloadType}>
                   <Radio value={0}>Blob Only</Radio>

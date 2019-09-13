@@ -2,49 +2,50 @@
 
 const express = require("express")
 const compression = require("compression")
-const url = "http://localhost:8080/nijie/build/static"
+const bodyParser = require("body-parser")
+const url = "https://files.poyashi.me/nijie/build/static"
 const css1 = "2.8d7f79a6.chunk.css"
-const css2 = "main.f935656d.chunk.css"
-const js1 = "2.6f2b0e7b.chunk.js"
-const js2 = "main.8f60729f.chunk.js"
+const css2 = "main.997c3a52.chunk.css"
+const js1 = "2.3824dd97.chunk.js"
+const js2 = "main.51796727.chunk.js"
 const js3 = "runtime~main.a8a9905a.js"
 const app = express()
-
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression())
 
+app.get("/main.js", function (req, res) {
+  return res.status(200).redirect("https://files.poyashi.me/nijie/main.js")
+})
+
 app.get("/", function (req, res) {
-  return res.status(200).send(page())
+  return res.status(200).send(page(req))
 })
 
 app.get("/downloader", function (req, res) {
-  return res.status(200).send(page())
+  return res.status(200).send(page(req))
 })
 
 app.get("/help+", function (req, res) {
-  return res.status(200).send(page())
+  return res.status(200).send(page(req))
 })
 
 app.get("/queue", function (req, res) {
-  return res.status(200).send(page())
+  return res.status(200).send(page(req))
 })
 
 app.get("/history", function (req, res) {
-  return res.status(200).send(page())
+  return res.status(200).send(page(req))
 })
 
 app.get("/settings", function (req, res) {
-  return res.status(200).send(page())
-})
-
-app.post("/directlyGet", function (req,res) {
-  return res.status(200).send(directlyGet());
+  return res.status(200).send(page(req))
 })
 
 app.use(function(req, res, next){
-  return res.status(404).send(page())
+  return res.status(404).send(page(req))
 })
 
-function page()  {
+function page(req,insert = null)  {
   return `<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -60,6 +61,8 @@ function page()  {
   You need to enable JavaScript to run this app.
   </noscript>
   <div id="root"></div>
+  ${req.method === "POST" ? `<input id="temp" type="hidden" name="temp" value="${encodeURIComponent(req.body.q).replace("%5B%22","%5B").replace("%22%5D","%5D").replace(/%5C%22/g,"%22").replace(/%22%7D%22%2C%22%7B%22/g,"%22%7D%2C%7B%22")}"/>` : ""}
+  ${insert !== null ? insert : ""}
   <script type="text/javascript" src="${url}/js/${js1}" async></script>
   <script type="text/javascript" src="${url}/js/${js2}" async></script>
   <script type="text/javascript" src="${url}/js/${js3}" async></script>
@@ -68,7 +71,7 @@ function page()  {
   </html>`
 }
 
-var PORT = process.env.PORT || 8081
+var PORT = process.env.PORT || 8090
 
 app.listen(PORT, function() {
   console.log("Server running at localhost:" + PORT)

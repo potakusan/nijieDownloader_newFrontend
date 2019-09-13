@@ -14,8 +14,8 @@ export class ImageList extends Component{
     super(props);
     this.state = {
       spinning : false,
-      origin : this.props.data,
-      imageSum : this.props.data.length,
+      origin : this.props.data ? this.props.data : [],
+      imageSum : this.props.data ? this.props.data.length : 0,
       splitArray : {},
       disabled : {},
       loading: true,
@@ -112,6 +112,9 @@ export class ImageList extends Component{
 
   splitArray(){
     const {data} = this.props;
+    if(!data){
+      return null;
+    }
     return data.reduce((obj, v, i)=> {
       obj[v.id] = obj[v.id] || [];
       obj[v.id].push(v);
@@ -149,7 +152,7 @@ export class ImageList extends Component{
             {origin.length === 0 && <Empty style={{marginTop:"20px"}} description={<span>ダウンロードできる画像はありません。</span>}/>}
             {Object.keys(splitArray).map((item,num)=>{
               return (
-                <Album key={`${item}-${num}`} album={splitArray[item]} origin={this.state.origin} showType={showType}
+                <Album key={`${item}-${num}`} album={splitArray[item]} showType={showType}
                   toggleEditor={this.toggleEditor} id={item}
                   editDisabled={this.editDisabled} disabled={disabled[item]}
                   imageSum={this.state.imageSum} executeChanger={this.executeChanger}/>)
