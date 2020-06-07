@@ -3,7 +3,8 @@ import { message, Row, Menu, Typography, Divider, Button, Dropdown, Spin, notifi
 import DropDownMenu from "../menu/index";
 import Editor from "../common/editor";
 import Image from "../common/image";
-import {pinnedDB} from "../indexedDB";
+import {pinnedDB,debugLogs} from "../indexedDB";
+import localStorage from "../localStorage";
 
 const { Title } = Typography;
 
@@ -11,6 +12,7 @@ export default class Album extends Component{
 
   constructor(props){
     super(props);
+    const _ls = new localStorage();
     this.state = {
       imageUrls : [],
       currentSelection : {
@@ -20,9 +22,11 @@ export default class Album extends Component{
       },
       editorVisible:false,
       storedItems : [],
-      spinning : false
+      spinning : false,
+      debugMode : _ls.item.debugMode
     }
     this.storage = new pinnedDB();
+    this.debugLogs = new debugLogs();
     this.toggleDisable = this.toggleDisable.bind(this);
     this.togglePinned = this.togglePinned.bind(this);
     this.executeChanger = this.executeChanger.bind(this);
@@ -85,6 +89,9 @@ export default class Album extends Component{
 
   allSelect(){
     this.props.editDisabled(0,null,this.props.id);
+    if(this.state.debugMode){
+      this.debugLogs.setItem("Selected all items.");
+    }
   }
 
   allRemove(){
@@ -93,6 +100,9 @@ export default class Album extends Component{
       newState.push(i+1);
     }
     this.props.editDisabled(1,newState,this.props.id);
+    if(this.state.debugMode){
+      this.debugLogs.setItem("Unselected all items.");
+    }
   }
 
   toggleAllSelection(){
@@ -106,6 +116,9 @@ export default class Album extends Component{
       return disabled.indexOf(item) === -1
     });
     this.props.editDisabled(1,newState,id);
+    if(this.state.debugMode){
+      this.debugLogs.setItem("Toggled the selection states of all items in the same album.");
+    }
   }
 
   toggleDisable(e){
@@ -117,6 +130,9 @@ export default class Album extends Component{
     const num = Number(e.currentTarget.getAttribute("data-num"));
     let newState = this.exec(num);
     this.props.editDisabled(1,newState,this.props.id);
+    if(this.state.debugMode){
+      this.debugLogs.setItem("Toggled the selection state of the item.");
+    }
   }
 
   // Pinned
@@ -136,10 +152,10 @@ export default class Album extends Component{
   }
 
   async allPinned(){
+    const album = this.props.album;
+    const {title,id} = album[0];
     try{
       this.toggleSpinner();
-      const album = this.props.album;
-      const {title,id} = album[0];
       const albumLen = album.length;
       const date = new Date().toString();
       let items = [];
@@ -149,8 +165,14 @@ export default class Album extends Component{
       }
       this.storage.setMultipleItem(items);
       message.success(`「${title}」を一括ピン留めしました。`);
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`Pinned all items in ${title}.`);
+      }
       this.reloadPinnedItems();
     }catch(e){
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`FAILED : Pin all items in ${title} / ${e.message ? e.message : e}.`,false);
+      }
       return this.showWarning((
         <p>
           {this.criticalMes}
@@ -161,14 +183,20 @@ export default class Album extends Component{
   }
 
   async allRemovePinned(){
+    const album = this.props.album;
+    const {title,id} = album[0];
     try{
       this.toggleSpinner();
-      const album = this.props.album;
-      const {title,id} = album[0];
       message.success(`「${title}」のピン留めを一括解除しました。`);
       await this.storage.resetItems(id);
       this.reloadPinnedItems();
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`Unpinned all items in ${title}.`);
+      }
     }catch(e){
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`FAILED : Unpin all items in ${title} / ${e.message ? e.message : e}.`,false);
+      }
       return this.showWarning((
         <p>
           {this.criticalMes}
@@ -179,17 +207,17 @@ export default class Album extends Component{
   }
 
   async togglePinned(e){
+    const num = e.currentTarget.getAttribute("data-num");
+    const item = this.props.album[num-1];
+    const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
+    const itemId = item.id;
+    const itemNum = item.current;
     try{
       if(e.shiftKey){
         this.toggleAllPinnedStatus();
         return;
       }
       this.toggleSpinner();
-      const num = e.currentTarget.getAttribute("data-num");
-      const item = this.props.album[num-1];
-      const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
-      const itemId = item.id;
-      const itemNum = item.current;
       const duplication = await this.storage.checkDuplication(itemId,itemNum);
       if(duplication.length > 0){
         message.success(`「${title}」のピン留めを解除しました。`);
@@ -198,8 +226,14 @@ export default class Album extends Component{
         message.success(`「${title}」をピン留めしました。`);
         await this.storage.setItem(item);
       }
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`toggled the pinned state of item named ${title}.`);
+      }
       this.reloadPinnedItems();
     }catch(e){
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`FAILED : toggle the pinned state of item named ${title} / ${e.message ? e.message : e}.`,false);
+      }
       return this.showWarning((
         <p>
           {this.criticalMes}
@@ -225,6 +259,9 @@ export default class Album extends Component{
     }
     this.storage.setMultipleItem(items);
     message.success(`「${title}」のピン留め状態を一括反転しました。`);
+    if(this.state.debugMode){
+      this.debugLogs.setItem(`toggled the pinned state of all items in ${title}.`);
+    }
     this.reloadPinnedItems();
   }
 

@@ -47,6 +47,7 @@ export class ImageList extends Component{
 
   allPinned(){
     const album = this.props.album;
+    console.log(this.props);
     const {title,id} = album[0];
     const albumLen = album.length;
     message.success(`「${title}」を一括ピン留めしました。`);

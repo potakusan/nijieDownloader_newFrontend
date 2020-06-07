@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Button, Icon, Form, Input, Layout, Typography, Checkbox, Radio,Spin,message } from "antd";
+import { Button, Icon, Form, Input, Layout, Typography, Checkbox, Radio,Spin,message,Switch } from "antd";
 import { Link } from "react-router-dom";
 
 import Export from "../components/export";
@@ -14,11 +14,11 @@ class Settings extends Component{
   constructor(){
     super();
     this._ls = new localStorage();
-    const {fileName,downloadType,noAlertOnSuccess} = this._ls.item;
+    const {fileName,downloadType,noAlertOnSuccess,debugMode} = this._ls.item;
     this.state = {
       fileName :  fileName ? fileName :  "$o",
       downloadType : downloadType,
-      spinning: false,
+      debugMode : debugMode,
     }
     this.saveSettings = this.saveSettings.bind(this);
   }
@@ -30,11 +30,11 @@ class Settings extends Component{
 
   handleFileNameChange = (e)=> this.setState({fileName:e.target.value});
   handleRadioChange = (e)=> this.setState({downloadType:e.target.value})
+  toggleDebugMode = (checked,e)=> this.setState({debugMode:checked});
 
   render(){
-    const {spinning} = this.state;
     return (
-      <Spin className="commonPadding" spinning={spinning}>
+      <Spin className="commonPadding" spinning={false}>
         <Content style={{ padding: '15px 20px' }}>
           <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
             <Typography>
@@ -53,6 +53,10 @@ class Settings extends Component{
                   <Radio value={1} disabled>Streams API</Radio>
                 </Radio.Group>
                 <p>ダウンロード方式を変更します。</p>
+                <Title level={4}>デバッグモード(β)</Title>
+                <Switch defaultChecked onChange={this.toggleDebugMode} checked={this.state.debugMode} />
+                <p>デバッグモードを有効化します。（バグが発生した場合、デバッグモードの出力結果を添付の上msqkn310 at gmail.comまでお問い合わせください）<br/>
+                デバッグスクリーンはページを再読み込み後表示されます。</p>
                 <Button type="primary" size="large" icon="save" onClick={this.saveSettings}>
                   設定を保存
                 </Button>

@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import { Button, Icon, Input, Typography, message, Upload } from "antd";
 import { Link } from "react-router-dom";
-import {pinnedDB,historyItems,historyLists} from "../indexedDB";
+import {pinnedDB,historyItems,historyLists,debugLogs} from "../indexedDB";
 import { saveAs } from "file-saver";
 import { timeFormatter }  from "../common/functions";
 import ModalStatus from "../common/modal";
@@ -19,6 +19,7 @@ class Settings extends Component{
     this.historyItems = new historyItems();
     this.historyLists = new historyLists();
     this._ls = new localStorage();
+    this.debugLogs = new debugLogs();
     this.exportData = this.exportData.bind(this);
     this.importData = this.importData.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
@@ -27,6 +28,7 @@ class Settings extends Component{
       data : null,
       showDeletePinnedItemsDialog : false,
       showDeleteHistoryDialog : false,
+      debugMode : this._ls.item.debugMode
     }
   }
 
@@ -42,12 +44,21 @@ class Settings extends Component{
     const fileName = `export_${timeFormatter(0)}.json`;
     const blob = new Blob([JSON.stringify(data)],{ type: "text/plain;charset=utf-8"});
     saveAs(blob,fileName);
+    if(this.state.debugMode){
+      this.debugLogs.setItem(`Exported configure file.`);
+    }
     message.success(<span>データを書き出しました。書き出されたファイル:{fileName}</span>)
   }
 
   importData(file){
+    const fail = (mes) =>{
+      if(this.state.debugMode){
+        this.debugLogs.setItem(`FAILED : Import configure file , ${mes}.`,false);
+      }
+      message.error(mes);
+    }
     const errorMes = (e) => {
-      message.error("読み込みに失敗しました。エラーメッセージを確認してください。");
+      fail("読み込みに失敗しました。エラーメッセージを確認してください。");
       return (
         <p>
           An error occured while processing your request.<br/>
@@ -58,14 +69,14 @@ class Settings extends Component{
     try{
       message.info(`読み込んでいます : ${file.name}`);
       if(file.type !== "application/json"){
-        message.error("選択されたファイルは読み込み可能な形式ではありません。");
+        fail("選択されたファイルは読み込み可能な形式ではありません。");
       }
       const fs = new FileReader();
       fs.onload = async event =>{
         try{
           const res = JSON.parse(event.target.result);
           if(!res.settings && !res.pinnedItems && !res.historyLists && !res.historyItems){
-            message.error("インポートするデータがありません。");
+            fail("インポートするデータがありません。");
           }
           if(res.settings){
             this._ls.item = JSON.parse(res.settings);

@@ -56,7 +56,14 @@ export default class DownloadButton extends Component{
       for(let i = 0; i < keys.length; ++i){
         const c = splitArray[keys[i]];
         //最初のイラストのファイル名は必ず先頭に作者IDが来るっぽい（未検証）
-        const illustratorId = c[0]["url"].match(".+/(.+?)\.[a-z]+([\?#;].*)?$")[1].match(/^.*?(?=_)/)[0];
+        let illustratorId = c[0]["url"].match(".+\/(.+?)\.[a-z1-9]+([\?#;].*)?$");
+        if(!illustratorId){
+          throw new Error("Pattern unmatched - " + c[0]["url"]);
+        }
+        illustratorId = illustratorId[1].match(/^.*?(?=_)/)[0];
+        if(!illustratorId){
+          illustratorId = "unknown";
+        }
         for(let j = 0, len = c.length; j < len; ++j){
           if(disabled && disabled[keys[i]] && disabled[keys[i]][j]){
             continue;
@@ -90,6 +97,7 @@ export default class DownloadButton extends Component{
         progress: 100,
       });
     }catch(e){
+      console.log(e)
       showError((
         <p>
           An error occured while processing your request.<br/>

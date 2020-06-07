@@ -17,6 +17,8 @@ import Header from "../components/views/header";
 import WebSider from "../components/views/sider";
 import NotFound from "../pages/notFound";
 
+import DebugMode from "../components/debugMode";
+
 class MainContent extends Component {
 
   render(){
@@ -29,6 +31,7 @@ class MainContent extends Component {
       <Layout style={{marginTop:"64px"}}>
         <WebSider history={this.props.history} currentPage={currentPage}/>
         <Layout>
+          <DebugMode/>
           <Switch>
             <Route path="/home" exact={true} component={Index} />
             <Route path="/downloader" exact={true} component={Downloader} />

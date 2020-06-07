@@ -3,7 +3,7 @@ import {timeFormatter}  from "./functions";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import streamSaver from "streamsaver";
-import {historyLists,historyItems} from "../indexedDB";
+import {historyLists,historyItems,debugLogs} from "../indexedDB";
 
 export default class{
 
@@ -20,6 +20,8 @@ export default class{
     this.currentItem = null;
 
     this.proxy = "https://proxy.poyashi.me/?type=nijie&url=";
+    this.debugMode = t.debugMode;
+    this.debugLogs = new debugLogs();
   }
 
   async wait(msec = 300){
@@ -32,20 +34,36 @@ export default class{
 
   async fetch(include = true){
     await this.wait();
+    if(this.debugMode){
+      this.debugLogs.setItem(`Calling fetch API , URL : ${this.currentItem.url}  ...`);
+    }
     const headers = new Headers();
     const res = await fetch(this.proxy + this.currentItem.url, {method:"GET"});
     if(!this.currentItem || !this.currentName || !this.currentExt){
-      return {"error":true,"reason":"(Process will continue) Invalid URL Parameters sent.(Filename or extension,or both was not found) - currentFile:" + this.currentItem.title};
+      const text = "(Process will continue) Invalid URL Parameters sent.(Filename or extension,or both was not found) - currentFile:" + this.currentItem.title;
+      if(this.debugMode){
+        this.debugLogs.setItem(`FAILED : Calling fetch API , ${text} `,false);
+      }
+      return {"error":true,"reason":text};
     }
     if(!res.ok){
-      return {"error":true,"reason":"(Process will continue) Response is not valid - Expected 200 but got " + res.status + ". - currentFile:" + this.currentItem.title};
+      const text = "(Process will continue) Response is not valid - Expected 200 but got " + res.status + ". - currentFile:" + this.currentItem.title;
+      if(this.debugMode){
+        this.debugLogs.setItem(`FAILED : Calling fetch API , ${text} `,false);
+      }
+      return {"error":true,"reason":text};
     }
+    const speed = res.headers.get("X-Speed") || 0;
+    const size = res.headers.get("X-FIlesize") || 0;
     if(include){
+      if(this.debugMode){
+        this.debugLogs.setItem(`SUCCESS : Calling fetch API , Response code : ${res.status} , avg. speed : ${speed} , size : ${size}`);
+      }
       this.zip.file(this.currentName + this.currentExt,await res.arrayBuffer());
     }
     return {"error":false,information:{
-      speed : res.headers.get("X-Speed") || 0,
-      size :  res.headers.get("X-Filesize") || 0,
+      speed : speed,
+      size :  size,
     }};
   }
 
@@ -69,7 +87,7 @@ export default class{
   }
 
   convertFileName(currentItem,iId){
-    const d = currentItem.url.match(".+/(.+?)\.[a-z]+([\?#;].*)?$");
+    const d = currentItem.url.match(".+/(.+?)\.[a-z1-9]+([\?#;].*)?$");
     const fileName = d[1];
     this.currentItem = currentItem;
     this.currentExt = currentItem.url.match(/\.(?!.*\.).*$/) ? currentItem.url.match(/\.(?!.*\.).*$/)[0] : ".jpg";

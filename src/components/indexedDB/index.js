@@ -24,8 +24,11 @@ const storageWrapper = class{
     this.db.version(1).stores({
       pinned : "++num,id, title, illustrator, url, current, pageSum, cnt , updatedAt",
       history : "name, sum, fileSize, createdAt",
-      historyContent : "++num, title, illustrator, url, current, pageSum, cnt , parent, updatedAt"
-    })
+      historyContent : "++num, title, illustrator, url, current, pageSum, cnt , parent, updatedAt",
+    });
+    this.db.version(2).stores({
+      debugLogs : "++num, createdAt, body, isSuccess",
+    });
   }
 
   groupByItemId(innerArray = false){
@@ -108,7 +111,6 @@ export const historyLists = class extends storageWrapper{
     return this.db.history.bulkPut(items);
   }
 
-
   setItem(sum,fileSize){
     return this.db.history.put({
       name : timeFormatter(3),
@@ -152,6 +154,32 @@ export const historyItems = class extends storageWrapper{
 
   deleteItem(parent){
     return this.db.historyContent.where({parent:parent}).delete();
+  }
+
+}
+
+export const debugLogs = class extends storageWrapper{
+
+  async getAllItems(){
+    const currentData = await this.db.debugLogs.toArray();
+    this.allData = currentData;
+    return currentData;
+  }
+
+  deleteAll(){
+    return this.db.debugLogs.clear();
+  }
+
+  bulkPut(items){
+    return this.db.debugLogs.bulkPut(items);
+  }
+
+  setItem(body,isSuccess = true,){
+    return this.db.debugLogs.put({
+      createdAt : timeFormatter(3),
+      body : body,
+      isSuccess : isSuccess,
+    })
   }
 
 }
