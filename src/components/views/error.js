@@ -1,16 +1,16 @@
 import React,{Component} from "react";
-import { Alert } from 'antd';
+import { Alert } from "antd";
 
-export default class Loader extends Component{
+export default class Error extends Component{
 
   render(){
-    const {message,additionalDescription} = this.props;
+    const {message,additionalDescription,type} = this.props;
     return (
       <div style={{width:"100%"}}>
         <Alert
           message={message}
           description={additionalDescription}
-          type="info"
+          type={type ? type : "info"}
           showIcon
         />
       </div>

@@ -1,8 +1,10 @@
 import React,{Component} from "react";
-import Loading from "../components/loading";
-import Error from "../components/error";
+import { Layout } from "antd";
+import Loading from "../components/views/loading";
+import {htmlEntities} from "../components/common/functions";
+import {ImageList} from "../components/downloader/imageList";
 
-import {Image,ImageList} from "../components/imageList";
+const { Content } = Layout;
 
 class Downloader extends Component{
 
@@ -19,7 +21,7 @@ class Downloader extends Component{
   initializer(){
     let postData = document.getElementById("temp");
     if(postData){
-      postData = JSON.parse("[" + decodeURIComponent(postData.value).replace("q=","") + "]");
+      postData = JSON.parse("[" + htmlEntities(decodeURIComponent(postData.value).replace("q=","")) + "]");
     }
     return this.setState({
       loaded: true,
@@ -34,27 +36,19 @@ class Downloader extends Component{
   render(){
     if(!this.state.loaded){
       return (
-        <div>
-          <Loading/>
-        </div>
+        <Content style={{ padding: '15px 20px' }}>
+          <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+            <Loading/>
+          </div>
+        </Content>
       )
     }
-    if(!this.state.postData || this.state.postData.length === 0){
-      return (
-        <Error
-          message={"この機能を使用するにはPOSTメソッドを経由してアクセスしてください。"}
-          additionalDescription={
-            <span>
-              ブックマークレットを介してアクセスしてください。<br/>
-              <a>ここをクリック</a>してキューされているデータを呼び出します。
-            </span>
-          }/>
-      );
-    }
     return (
-    <div>
-      <ImageList data={this.state.postData}/>
-    </div>
+      <Content style={{ padding: '15px 20px' }}>
+        <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
+          <ImageList data={this.state.postData} hasNoItems={!this.state.postData || this.state.postData.length === 0}/>
+        </div>
+      </Content>
     );
   }
 
