@@ -48,6 +48,8 @@ class Downloader extends Component{
         <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
           <ImageList data={this.state.postData} hasNoItems={!this.state.postData || this.state.postData.length === 0}/>
         </div>
+        <form method="POST" action="/downloader" data-netlify="true" data-netlify-honeypot="dummy" enctype="application/x-www-form-urlencoded" style={{display:"none"}}>
+        </form>
       </Content>
     );
   }
