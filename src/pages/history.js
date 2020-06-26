@@ -2,7 +2,7 @@ import React,{Component} from "react";
 import { Layout, Typography, Spin } from "antd";
 import HistoryView from "../components/history";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 const { Content } = Layout;
 
 class History extends Component{

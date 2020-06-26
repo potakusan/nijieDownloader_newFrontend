@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Button, Icon, Form, Input, Layout, Typography, Checkbox, Radio,Spin,message,Switch } from "antd";
+import { Button, Input, Layout, Typography, Radio,Spin,message,Switch } from "antd";
 import { Link } from "react-router-dom";
 
 import Export from "../components/export";
@@ -7,14 +7,13 @@ import localStorage from "../components/localStorage";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
-const { TextArea } = Input;
 
 class Settings extends Component{
 
   constructor(){
     super();
     this._ls = new localStorage();
-    const {fileName,downloadType,noAlertOnSuccess,debugMode} = this._ls.item;
+    const {fileName,downloadType,debugMode} = this._ls.item;
     this.state = {
       fileName :  fileName ? fileName :  "$o",
       downloadType : downloadType,

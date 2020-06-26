@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import {Card,Timeline} from "antd";
+import {Timeline} from "antd";
 import {items} from "./api";
 import {imgToThumbnails} from "../common/functions";
 import Lightbox from "../common/lightbox";
@@ -38,12 +38,12 @@ class List extends Component{
     const {isOpen,index,thumbs} = this.state;
     return (
       <Timeline.Item>
-        <a onClick={this.viewFull}>{list.name} ({list.sum} 枚 / {Math.round(list.fileSize / 1048576 * 100) / 100} MiB)</a>
+        <span onClick={this.viewFull}>{list.name} ({list.sum} 枚 / {Math.round(list.fileSize / 1048576 * 100) / 100} MiB)</span>
         <div className="flexImageBoxWrapper">
           {thumbs.map((i,num)=>{
             return (
               <div className="flexImageBox" key={`${list.name} + ${i}`}>
-                <img src={imgToThumbnails(i)} onClick={()=>this.openLightBox(num)}/>
+                <img src={imgToThumbnails(i)} alt={"number of" + i} onClick={()=>this.openLightBox(num)}/>
               </div>
             )
           })}

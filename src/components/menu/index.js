@@ -3,10 +3,6 @@ import { Menu, Dropdown } from "antd";
 
 export default class DropDownMenu extends Component{
 
-  constructor(props){
-    super(props);
-  }
-
   openLink = ()=> window.open( "//nijie.info/view.php?id=" + this.props.id );
 
   render(){
@@ -28,52 +24,51 @@ export default class DropDownMenu extends Component{
         {!disableStatusButtons &&
           <Menu.ItemGroup title="選択状態">
             <Menu.Item key="0">
-              <a
-                href={null}
+              <span
                 onClick={allSelect}
                 data-id={id}
-              >すべて選択</a>
+              >すべて選択</span>
             </Menu.Item>
             <Menu.Item key="1">
-              <a
+              <span
                 onClick={allRemove}
                 data-id={id}
-              >すべて除外</a>
+              >すべて除外</span>
             </Menu.Item>
             <Menu.Item key="2">
-              <a
+              <span
                 onClick={toggleAllSelection}
                 data-id={id}
-              >選択/除外の一括反転</a>
+              >選択/除外の一括反転</span>
             </Menu.Item>
           </Menu.ItemGroup>
         }
         <Menu.ItemGroup title="ピン留め">
           <Menu.Item key="3">
-            <a
+            <span
               onClick={allPinned}
-              >一括ピン留め</a>
+              >一括ピン留め</span>
           </Menu.Item>
           <Menu.Item key="4">
-            <a
+            <span
               onClick={allRemovePinned}
-              >一括ピン留め解除</a>
+              >一括ピン留め解除</span>
           </Menu.Item>
           <Menu.Item key="5">
-            <a
+            <span
               onClick={toggleAllPinnedStatus}
-              >ピン留め状態の一括反転</a>
+              >ピン留め状態の一括反転</span>
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.ItemGroup title="その他">
           <Menu.Item key="7">
-            <a
+            <span
               onClick={toggleEditor}
-              data-id={id}>情報の変更</a>
+              data-id={id}>情報の変更</span>
           </Menu.Item>
           <Menu.Item key="8">
-            <a
-              onClick={this.openLink}>ニジエ上で開く</a>
+            <span
+              onClick={this.openLink}>ニジエ上で開く</span>
           </Menu.Item>
         </Menu.ItemGroup>
       </Menu>

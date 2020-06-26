@@ -25,6 +25,7 @@ class List extends Component{
       l.map(item=>{
         im += item.sum;
         ds += item.fileSize;
+        return 0;
       })
       this.setState({
         list : l,

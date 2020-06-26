@@ -1,12 +1,7 @@
 import React,{Component} from "react";
 import Lightbox from "react-image-lightbox";
-import {imgToThumbnails} from "./functions";
 
 export default class Image extends Component{
-
-  constructor(props){
-    super(props);
-  }
 
   render(){
     const {imageUrls,index,close,move} = this.props;

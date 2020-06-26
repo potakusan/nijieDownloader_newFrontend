@@ -2,11 +2,6 @@ import React,{Component} from "react";
 import Error from "../views/error";
 
 export default class NoImg extends Component{
-
-  constructor(props){
-    super(props);
-  }
-
   render(){
     return (
       <div style={{ background: '#fff', minHeight: 280 }} className="commonPadding">
@@ -15,7 +10,7 @@ export default class NoImg extends Component{
           additionalDescription={
             <span>
               ブックマークレットを介してアクセスしてください。<br/>
-            <a href={null} onClick={this.props.replaceItemsWithPinned}>ここをクリック</a>してキューされているデータを呼び出します。
+            <span style={{textDecoration:"underline"}} onClick={this.props.replaceItemsWithPinned}>ここをクリック</span>してキューされているデータを呼び出します。
             </span>
         }/>
       </div>

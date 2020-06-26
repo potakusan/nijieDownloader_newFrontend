@@ -4,7 +4,7 @@ require("moment/locale/ja");
 export const htmlEntities = (text) =>{
   const entities = [
     ["amp", "&"],
-    ["#039", "\'"],
+    ["#039", "'"],
   ];
 
   for ( let i = 0, max= entities.length;  i < max; ++i ) {
@@ -16,6 +16,7 @@ export const htmlEntities = (text) =>{
 export const timeFormatter = (type = 0,date = new Date()) =>{
   const m = moment(date);
   switch (type){
+    default:
     case 0:
     return m.format("YYYYMMDDHHmmss");
     case 1:

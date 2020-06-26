@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Modal } from "antd";
+import { Modal } from "antd";
 
 export default class ModalWindow extends Component{
 

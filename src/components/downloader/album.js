@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { message, Row, Menu, Typography, Divider, Button, Dropdown, Spin, notification, Affix } from "antd";
+import { message, Row, Typography, Divider, Button, Spin, notification, Affix } from "antd";
 import DropDownMenu from "../menu/index";
 import Editor from "../common/editor";
 import Image from "../common/image";
@@ -73,7 +73,7 @@ export default class Album extends Component{
   // Disabled
 
   exec = (i) =>{
-    const {id,disabled} = this.props;
+    const {disabled} = this.props;
     const filter = ()=>{
       const newState = disabled.filter(piece => piece !== i);
       return newState;
@@ -126,7 +126,6 @@ export default class Album extends Component{
       this.toggleAllSelection();
       return;
     }
-    let {disabled} = this.state;
     const num = Number(e.currentTarget.getAttribute("data-num"));
     let newState = this.exec(num);
     this.props.editDisabled(1,newState,this.props.id);
@@ -157,7 +156,6 @@ export default class Album extends Component{
     try{
       this.toggleSpinner();
       const albumLen = album.length;
-      const date = new Date().toString();
       let items = [];
       await this.storage.resetItems(id);
       for(let i = 0;i < albumLen; ++i){
@@ -310,6 +308,7 @@ export default class Album extends Component{
       duration: duration,
     };
     switch(type){
+      default:
       case 0: return notification.error(mes);
       case 1: return notification.warning(mes);
     }
@@ -348,7 +347,7 @@ export default class Album extends Component{
               toggleAllSelection={this.toggleAllSelection} toggleEditor={this.toggleEditor}
               allPinned={this.allPinned} allRemovePinned={this.allRemovePinned}
               toggleAllPinnedStatus={this.toggleAllPinnedStatus}>
-              <Button type="primary" icon="menu" type="dashed" className="grayButton"></Button>
+              <Button icon="menu" type="dashed" className="grayButton"></Button>
             </DropDownMenu>
             &nbsp;
             {title}&nbsp;<span className="smallText">{illustrator}</span>

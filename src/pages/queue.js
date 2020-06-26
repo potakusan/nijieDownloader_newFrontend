@@ -4,7 +4,7 @@ import {ImageList} from "../components/storagedItems/imageList";
 import {pinnedDB} from "../components/indexedDB";
 import Error from "../components/views/error";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 const { Content, Footer } = Layout;
 
 class Index extends Component{
@@ -71,7 +71,6 @@ class Index extends Component{
     const keysMapping = (target)=>{
       return Object.keys(target);
     }
-    let {pinnedItems} = this.state;
     const {willRemove} = this.state;
     return Promise.all(keysMapping(willRemove).map(async(i)=>{
       const item = willRemove[i];

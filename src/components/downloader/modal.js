@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Button, Modal, Progress } from "antd";
+import { Button, Modal, Progress } from "antd";
 import { Link } from "react-router-dom";
 
 export default class ModalWindow extends Component{
@@ -20,7 +20,7 @@ export default class ModalWindow extends Component{
           closable={c}
           footer={
             [
-              <Button key="cancelButton" onClick={this.handleCancel} disabled={p === 100} onClick={cancelButton}>
+              <Button key="cancelButton" disabled={p === 100} onClick={cancelButton}>
                 中止
               </Button>
             ]

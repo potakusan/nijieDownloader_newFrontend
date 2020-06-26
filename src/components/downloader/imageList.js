@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu, Spin, message, Empty, Switch, Typography } from "antd";
+import { Layout, Spin, message, Empty, Switch, Typography } from "antd";
 import Album from "./album";
 import {pinnedDB,historyItems} from "../indexedDB";
 import Loading from "../views/loading";
@@ -74,8 +74,11 @@ export class ImageList extends Component{
             if(!disabled[a]){ disabled[a] = []; }
             disabled[a].push(c.current);
           }
-        })
-      })
+          return 0;
+        });
+        return 0;
+      });
+      return 0;
     });
     if(!disabled){
       return;
@@ -102,6 +105,7 @@ export class ImageList extends Component{
     let disabledSum = 0;
     Object.keys(disabled).map(item=>{
       disabledSum += disabled[item].length;
+      return 0;
     });
 
     this.setState({

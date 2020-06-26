@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu, notification } from "antd";
+import { Button, Dropdown, Menu, notification } from "antd";
 import downloader from "../common/downloader";
 import showError from "../common/showError";
 import ModalStatus from "./modal";
@@ -39,7 +39,8 @@ export default class DownloadButton extends Component{
     let newState = this.state;
     Object.keys(target).map(item=>{
       newState[item] = target[item];
-    })
+      return 0;
+    });
     this.setState(newState);
   }
 
@@ -52,11 +53,10 @@ export default class DownloadButton extends Component{
       const startTime = new Date().getTime();
       let downloadedImages = [];
       let currentProgress = 0,keys = [];
-      const download = Object.keys(splitArray).map(item=>keys.push(item));
       for(let i = 0; i < keys.length; ++i){
         const c = splitArray[keys[i]];
         //最初のイラストのファイル名は必ず先頭に作者IDが来るっぽい（未検証）
-        let illustratorId = c[0]["url"].match(".+\/(.+?)\.[a-z1-9]+([\?#;].*)?$");
+        let illustratorId = c[0]["url"].match(".+/(.+?).[a-z1-9]+([?#;].*)?$");
         if(!illustratorId){
           throw new Error("Pattern unmatched - " + c[0]["url"]);
         }
@@ -122,31 +122,29 @@ export default class DownloadButton extends Component{
       <Menu>
         <Menu.ItemGroup title="リセット">
           <Menu.Item key="0">
-            <a
+            <span
               href={null}
               onClick={this.props.resetAllEdit}
-              >編集状態をリセット</a>
+              >編集状態をリセット</span>
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.ItemGroup title="ピン留め">
           <Menu.Item key="0">
-            <a
-              href={null}
+            <span
               onClick={this.props.replaceItemsWithPinned}
-              >ピン留めされたアイテムに置き換え</a>
+              >ピン留めされたアイテムに置き換え</span>
           </Menu.Item>
         </Menu.ItemGroup>
         <Menu.ItemGroup title="一括除外">
           <Menu.Item key="0">
-            <a
-              href={null}
+            <span
               onClick={this.props.removeAllDownloadedItems}
-              >ダウンロード済みアイテムを除外</a>
+              >ダウンロード済みアイテムを除外</span>
           </Menu.Item>
         </Menu.ItemGroup>
       </Menu>
     );
-    const {showStatus,progress,canCloseModal,currentItem,currentNum,information} = this.state;
+    const {showStatus,progress,canCloseModal,currentItem,currentNum} = this.state;
     return (
       <div>
         <div style={{display:"block",position:"fixed",top:"11px",right:"13px",zIndex:"10"}}>

@@ -1,9 +1,8 @@
 import React,{Component} from "react";
-import {Modal,Collapse} from "antd";
+import {Collapse} from "antd";
 import {debugLogs} from "../indexedDB";
 import localStorage from "../localStorage";
 import {timeFormatter} from "../common/functions";
-const { confirm } = Modal;
 const { Panel } = Collapse;
 
 class debugScreen extends Component{
