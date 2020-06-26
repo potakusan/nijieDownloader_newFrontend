@@ -2,7 +2,6 @@ import localStorage from "../localStorage";
 import {timeFormatter}  from "./functions";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import streamSaver from "streamsaver";
 import {historyLists,historyItems,debugLogs} from "../indexedDB";
 
 export default class{
@@ -37,7 +36,6 @@ export default class{
     if(this.debugMode){
       this.debugLogs.setItem(`Calling fetch API , URL : ${this.currentItem.url}  ...`);
     }
-    const headers = new Headers();
     const res = await fetch(this.proxy + this.currentItem.url, {method:"GET"});
     if(!this.currentItem || !this.currentName || !this.currentExt){
       const text = "(Process will continue) Invalid URL Parameters sent.(Filename or extension,or both was not found) - currentFile:" + this.currentItem.title;
@@ -87,7 +85,7 @@ export default class{
   }
 
   convertFileName(currentItem,iId){
-    const d = currentItem.url.match(".+/(.+?)\.[a-z1-9]+([\?#;].*)?$");
+    const d = currentItem.url.match(".+/(.+?).[a-z1-9]+([?#;].*)?$");
     const fileName = d[1];
     this.currentItem = currentItem;
     this.currentExt = currentItem.url.match(/\.(?!.*\.).*$/) ? currentItem.url.match(/\.(?!.*\.).*$/)[0] : ".jpg";

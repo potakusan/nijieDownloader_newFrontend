@@ -1,7 +1,6 @@
 import React,{Component} from "react";
 import {Modal} from "antd";
 import {pinnedDB} from "../indexedDB";
-const { confirm } = Modal;
 
 class Test extends Component{
 
@@ -18,7 +17,7 @@ class Test extends Component{
     if(!window.fetch){
       errors.push(<span>・(致命的エラー)fetch APIを利用できません。</span>);
     }
-    if(!"localStorage" in window){
+    if(!("localStorage" in window)){
       errors.push(<span>・(致命的エラー)localStorageを利用できません。</span>);
     }
     try{

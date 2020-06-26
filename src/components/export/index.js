@@ -1,6 +1,5 @@
 import React,{Component} from "react";
-import { Button, Icon, Input, Typography, message, Upload } from "antd";
-import { Link } from "react-router-dom";
+import { Button, Icon, Typography, message, Upload } from "antd";
 import {pinnedDB,historyItems,historyLists,debugLogs} from "../indexedDB";
 import { saveAs } from "file-saver";
 import { timeFormatter }  from "../common/functions";
@@ -9,7 +8,6 @@ import showError from "../common/showError";
 import localStorage from "../localStorage";
 
 const { Title, Paragraph } = Typography;
-const { TextArea } = Input;
 
 class Settings extends Component{
 
@@ -122,7 +120,7 @@ class Settings extends Component{
       await this.pinnedDB.deleteAll();
     }else{
       const db = this.historyItems._this();
-      const {res,error} = await this.historyItems.openTransaction(
+      const {error} = await this.historyItems.openTransaction(
         "rw",
         [db.history,db.historyContent]
       );

@@ -1,8 +1,7 @@
 import React,{Component} from "react";
-import { Layout, Button, Dropdown, Menu, Typography, Row, message } from "antd";
+import { Button, Typography, Row, message } from "antd";
 import Image from "../common/image";
 import DropDownMenu from "../menu/index";
-import {inArray} from "../common/functions";
 
 const { Title } = Typography;
 
@@ -11,15 +10,15 @@ export class ImageList extends Component{
   constructor(props){
     super(props);
     const {data} = this.props;
-    let items = [] ,urls = [], title,illustrator,len;
+    let items = [] ,urls = [], title,illustrator;
     Object.keys(data).map((eachObj,i)=>{
       urls.push(data[eachObj]["url"]);
       items.push(data[eachObj]);
-      len++;
       if(i === 0){
         title = data[eachObj]["title"];
         illustrator = data[eachObj]["illustrator"];
       }
+      return 0;
     });
     this.state = {
       urls : urls,
@@ -70,7 +69,6 @@ export class ImageList extends Component{
     const num = Number(e.currentTarget.getAttribute("data-num"));
     const item = this.props.data[num];
     const title = item.pageSum > 1 ? `${item.title} (${item.current} / ${item.pageSum})` : item.title;
-    const itemId = item.id;
     let newState = this.state.willRemove;
     if(!this.inArray(num)){
       message.success(`「${title}」のピン留めを解除しました。`);
@@ -123,7 +121,7 @@ export class ImageList extends Component{
 
   render(){
     const {data,id} = this.props;
-    const {urls,willRemove,title,illustrator,imageSum} = this.state;
+    const {urls,title,illustrator} = this.state;
     return (
       <div>
         <Title level={4}>
@@ -132,7 +130,7 @@ export class ImageList extends Component{
             disableStatusButtons={true} toggleEditor={this.toggleEditor}
             allPinned={this.allPinned} allRemovePinned={this.allRemovePinned}
             toggleAllPinnedStatus={this.toggleAllPinnedStatus}>
-            <Button type="primary" icon="menu" type="dashed" className="grayButton"></Button>
+            <Button icon="menu" type="dashed" className="grayButton"></Button>
           </DropDownMenu>
           &nbsp;
           {title}&nbsp;<span className="smallText">{illustrator}</span>

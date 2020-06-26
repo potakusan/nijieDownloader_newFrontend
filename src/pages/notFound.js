@@ -1,6 +1,5 @@
 import React,{Component} from "react";
 import { Layout, Typography,Spin } from "antd";
-import { Link } from "react-router-dom";
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
 

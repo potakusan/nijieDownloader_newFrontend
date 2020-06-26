@@ -20,7 +20,7 @@ export const items = class{
     const items = await this.db.getAll(parent);
     items.filter((item,i)=>{
       if(i >= 5 && !isFull){
-        return;
+        return 0;
       }
       return thumbs.push(item.url);
     });
